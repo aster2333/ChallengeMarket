@@ -1,0 +1,105 @@
+{
+  "title": "Profile",
+  "tabs": {
+    "overview": "Overview",
+    "challenges": "My Challenges",
+    "submissions": "My Submissions",
+    "settings": "Settings"
+  },
+  "overview": {
+    "wallet_info": "Wallet Information",
+    "balance": "Balance",
+    "total_earned": "Total Earned",
+    "challenges_created": "Challenges Created",
+    "challenges_joined": "Challenges Joined",
+    "challenges_completed": "Challenges Completed",
+    "success_rate": "Success Rate",
+    "member_since": "Member Since",
+    "connect_wallet": "Please connect wallet first",
+    "connect_wallet_desc": "Connect wallet to view personal data",
+    "total_balance": "Total Balance",
+    "recharge": "Recharge",
+    "user_settings": "User Settings",
+    "edit_nickname": "Edit Nickname",
+    "set_avatar": "Set Avatar",
+    "copy_address": "Copy Address",
+    "withdraw": "Withdraw",
+    "message_settings": "Message Settings",
+    "security_settings": "Security Settings",
+    "follow_list": "Follow List",
+    "wallet_management": "Wallet Management",
+    "disconnect": "Disconnect",
+    "created_challenges": "Created Challenges",
+    "participated_challenges": "Participated Challenges",
+    "total_earnings_sol": "Total Earnings SOL"
+  },
+  "tabs": {
+    "my_challenges": "My Challenges",
+    "bet_records": "Bet Records",
+    "nft_collection": "NFT Collection",
+    "detailed_stats": "Detailed Stats"
+  },
+  "challenges": {
+    "created": "Created by Me",
+    "joined": "Joined by Me",
+    "completed": "Completed",
+    "no_challenges": "No challenges participated yet",
+    "no_bets": "No betting records yet",
+    "no_nfts": "No NFTs collected yet",
+    "view_details": "View Details",
+    "manage": "Manage",
+    "challenge_titles": {
+      "30天每日跑步5公里挑战": "30-Day 5KM Daily Running Challenge",
+      "7天早起挑战": "7-Day Early Rising Challenge",
+      "读书打卡21天": "21-Day Reading Check-in",
+      "健身达人30天挑战": "30-Day Fitness Master Challenge",
+      "戒烟30天挑战": "30-Day Quit Smoking Challenge",
+      "学习编程100天": "100-Day Programming Learning",
+      "减肥10公斤挑战": "10KG Weight Loss Challenge"
+    },
+    "participated": "Participated",
+    "ended": "Ended",
+    "success": "Success",
+    "failed": "Failed",
+    "pending": "Pending",
+    "won": "Won",
+    "challenge_stats": "Challenge Statistics",
+    "challenges_created_count": "Challenges Created",
+    "challenges_participated_count": "Challenges Participated",
+    "nft_collection_count": "NFT Collection Count",
+    "bet_stats": "Betting Statistics",
+    "total_bets_count": "Total Bets",
+    "win_rate": "Win Rate",
+    "total_earnings": "Total Earnings",
+    "global_rank": "Global Rank"
+  },
+  "submissions": {
+    "title": "My Submissions",
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "submitted_at": "Submitted At",
+    "challenge_title": "Challenge Title",
+    "no_submissions": "No submissions"
+  },
+  "settings": {
+    "title": "Account Settings",
+    "profile_settings": "Profile Settings",
+    "notification_settings": "Notification Settings",
+    "privacy_settings": "Privacy Settings",
+    "language_preference": "Language Preference",
+    "theme_preference": "Theme Preference",
+    "email_notifications": "Email Notifications",
+    "push_notifications": "Push Notifications",
+    "save_settings": "Save Settings",
+    "settings_saved": "Settings Saved"
+  },
+  "stats": {
+    "total_rewards": "Total Rewards",
+    "active_challenges": "Active Challenges",
+    "completion_rate": "Completion Rate",
+    "average_rating": "Average Rating"
+  }
+}

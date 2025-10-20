@@ -1,0 +1,99 @@
+{
+  "title": "个人资料",
+  "tabs": {
+    "overview": "概览",
+    "challenges": "我的挑战",
+    "submissions": "我的提交",
+    "settings": "设置"
+  },
+  "overview": {
+    "wallet_info": "钱包信息",
+    "balance": "余额",
+    "total_earned": "总收益",
+    "challenges_created": "创建的挑战",
+    "challenges_joined": "参与的挑战",
+    "challenges_completed": "完成的挑战",
+    "success_rate": "成功率",
+    "member_since": "注册时间",
+    "connect_wallet": "请先连接钱包",
+    "connect_wallet_desc": "连接钱包后即可查看个人数据",
+    "total_balance": "总余额",
+    "recharge": "充值",
+    "user_settings": "用户设置",
+    "edit_nickname": "修改昵称",
+    "set_avatar": "设置头像",
+    "copy_address": "复制地址",
+    "withdraw": "提现",
+    "message_settings": "消息设置",
+    "security_settings": "安全设置",
+    "follow_list": "关注列表",
+    "wallet_management": "钱包管理",
+    "disconnect": "断开连接",
+    "created_challenges": "发起挑战",
+    "participated_challenges": "参与挑战",
+    "total_earnings_sol": "总收益 SOL"
+  },
+  "tabs": {
+    "my_challenges": "我的挑战",
+    "bet_records": "下注记录",
+    "nft_collection": "NFT收藏",
+    "detailed_stats": "详细统计"
+  },
+  "challenges": {
+    "created": "我创建的",
+    "joined": "我参与的",
+    "completed": "已完成的",
+    "no_challenges": "暂无挑战",
+    "view_details": "查看详情",
+    "manage": "管理"
+  },
+  "submissions": {
+    "title": "我的提交",
+    "status": {
+      "pending": "待审核",
+      "approved": "已通过",
+      "rejected": "已拒绝"
+    },
+    "submitted_at": "提交时间",
+    "challenge_title": "挑战标题",
+    "no_submissions": "暂无提交记录"
+  },
+  "settings": {
+    "title": "账户设置",
+    "profile_settings": "个人资料设置",
+    "notification_settings": "通知设置",
+    "privacy_settings": "隐私设置",
+    "language_preference": "语言偏好",
+    "theme_preference": "主题偏好",
+    "email_notifications": "邮件通知",
+    "push_notifications": "推送通知",
+    "save_settings": "保存设置",
+    "settings_saved": "设置已保存"
+  },
+  "stats": {
+    "total_rewards": "总奖励",
+    "active_challenges": "活跃挑战",
+    "completion_rate": "完成率",
+    "average_rating": "平均评分",
+    "no_challenges": "还没有参与任何挑战",
+    "no_bets": "还没有任何下注记录",
+    "no_nfts": "还没有收集到任何NFT",
+    "created": "发起",
+    "participated": "参与",
+    "ended": "已结束",
+    "success": "成功",
+    "failed": "失败",
+    "pending": "待结算",
+    "won": "获胜",
+    "challenge_stats": "挑战统计",
+    "challenges_created_count": "发起挑战数",
+    "challenges_participated_count": "参与挑战数",
+    "success_rate": "成功率",
+    "nft_collection_count": "NFT收藏数",
+    "bet_stats": "下注统计",
+    "total_bets_count": "总下注次数",
+    "win_rate": "胜率",
+    "total_earnings": "总收益",
+    "global_rank": "全站排名"
+  }
+}

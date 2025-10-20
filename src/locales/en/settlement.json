@@ -1,0 +1,48 @@
+{
+  "title": "Challenge Settlement",
+  "subtitle": "Vote to determine challenge results and fairly distribute rewards",
+  "challenge_info": {
+    "prize_pool": "Prize Pool",
+    "participants": "Participants",
+    "total_bets": "Total Bets",
+    "time_remaining": "Time Remaining"
+  },
+  "evidence": {
+    "title": "Challenge Evidence",
+    "video_evidence": "Video Evidence"
+  },
+  "voting": {
+    "title": "Voting Options",
+    "subtitle": "Please vote based on the evidence to determine the challenge result",
+    "success": "Challenge Success",
+    "success_desc": "Participant successfully completed the challenge requirements",
+    "failed": "Challenge Failed",
+    "failed_desc": "Participant failed to complete the challenge requirements",
+    "confirm_vote": "Confirm Vote",
+    "already_voted": "Already Voted",
+    "submitting": "Submitting vote...",
+    "vote_success": "Vote successful!",
+    "vote_error": "Vote failed, please try again"
+  },
+  "results": {
+    "title": "Voting Results",
+    "votes": "votes",
+    "percentage": "%"
+  },
+  "rewards": {
+    "title": "Reward Distribution",
+    "challenge_reward": "Challenge Reward",
+    "voting_reward": "Voting Reward",
+    "creator_reward": "Creator Reward",
+    "other_reward": "Other Reward",
+    "total_distribution": "Total Reward Distribution"
+  },
+  "share": {
+    "button": "Share Results",
+    "text": "I participated in voting for \"{title}\" on Challenge Market!",
+    "title": "Challenge Market - Challenge Settlement",
+    "success": "Shared successfully!",
+    "copy_success": "Link copied to clipboard!",
+    "error": "Share failed, please try again"
+  }
+}

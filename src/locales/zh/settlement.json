@@ -1,0 +1,48 @@
+{
+  "title": "挑战结算",
+  "subtitle": "投票决定挑战结果，公平分配奖励",
+  "challenge_info": {
+    "prize_pool": "奖金池",
+    "participants": "参与者",
+    "total_bets": "下注",
+    "time_remaining": "剩余"
+  },
+  "evidence": {
+    "title": "挑战证据",
+    "video_evidence": "视频证据"
+  },
+  "voting": {
+    "title": "投票选择",
+    "subtitle": "请根据证据投票决定挑战结果",
+    "success": "挑战成功",
+    "success_desc": "参与者成功完成了挑战要求",
+    "failed": "挑战失败",
+    "failed_desc": "参与者未能完成挑战要求",
+    "confirm_vote": "确认投票",
+    "already_voted": "已投票",
+    "submitting": "正在提交投票...",
+    "vote_success": "投票成功！",
+    "vote_error": "投票失败，请重试"
+  },
+  "results": {
+    "title": "投票结果",
+    "votes": "票",
+    "percentage": "%"
+  },
+  "rewards": {
+    "title": "奖励分配",
+    "challenge_reward": "挑战奖励",
+    "voting_reward": "投票奖励",
+    "creator_reward": "创建奖励",
+    "other_reward": "其他奖励",
+    "total_distribution": "总奖励分配"
+  },
+  "share": {
+    "button": "分享结果",
+    "text": "我在Challenge Market参与了\"{title}\"的投票！",
+    "title": "Challenge Market - 挑战结算",
+    "success": "分享成功！",
+    "copy_success": "链接已复制到剪贴板！",
+    "error": "分享失败，请重试"
+  }
+}

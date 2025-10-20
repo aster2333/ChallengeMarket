@@ -1,0 +1,44 @@
+{
+  "network": {
+    "connection_failed": "网络连接失败",
+    "timeout": "请求超时",
+    "server_error": "服务器错误",
+    "not_found": "资源未找到",
+    "unauthorized": "未授权访问",
+    "forbidden": "访问被禁止"
+  },
+  "wallet": {
+    "not_connected": "钱包未连接",
+    "connection_failed": "钱包连接失败",
+    "transaction_failed": "交易失败",
+    "insufficient_balance": "余额不足",
+    "user_rejected": "用户拒绝了交易",
+    "network_mismatch": "网络不匹配"
+  },
+  "validation": {
+    "required_field": "此字段为必填项",
+    "invalid_email": "邮箱格式无效",
+    "invalid_amount": "金额无效",
+    "invalid_date": "日期无效",
+    "min_length": "长度不能少于 {{min}} 个字符",
+    "max_length": "长度不能超过 {{max}} 个字符",
+    "invalid_format": "格式无效"
+  },
+  "challenge": {
+    "not_found": "挑战不存在",
+    "already_joined": "您已经参与了此挑战",
+    "cannot_join": "无法参与此挑战",
+    "deadline_passed": "挑战截止时间已过",
+    "insufficient_reward": "奖励金额不足",
+    "creation_failed": "创建挑战失败",
+    "submission_failed": "提交失败"
+  },
+  "general": {
+    "unknown_error": "未知错误",
+    "try_again": "请重试",
+    "contact_support": "请联系客服",
+    "loading_failed": "加载失败",
+    "save_failed": "保存失败",
+    "delete_failed": "删除失败"
+  }
+}

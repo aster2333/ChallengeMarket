@@ -1,0 +1,78 @@
+{
+  "hero": {
+    "title": "Challenge Market",
+    "subtitle": "Create, participate and complete challenges to earn rewards",
+    "description": "Here you can create your own challenges, participate in others' challenges, and earn generous rewards by completing tasks.",
+    "get_started": "Get Started",
+    "learn_more": "Learn More"
+  },
+  "features": {
+    "title": "Platform Features",
+    "create": {
+      "title": "Create Challenges",
+      "description": "Set your challenge goals, rewards and rules"
+    },
+    "participate": {
+      "title": "Participate in Challenges",
+      "description": "Browse and join challenges that interest you"
+    },
+    "earn": {
+      "title": "Earn Rewards",
+      "description": "Complete challenges to earn generous token rewards"
+    }
+  },
+  "stats": {
+    "title": "Platform Statistics",
+    "total_challenges": "Total Challenges",
+    "active_users": "Active Users",
+    "total_rewards": "Total Reward Pool"
+  },
+  "recent_challenges": {
+    "title": "Recent Challenges",
+    "view_all": "View All"
+  },
+  "search": {
+    "placeholder": "Search challenges...",
+    "no_results": "No matching challenges found, try other keywords",
+    "no_challenges": "No challenges yet, be the first to create one!",
+    "create_challenge": "Create Challenge"
+  },
+  "filters": {
+    "sort_by": "Sort By",
+    "time_range": "Time Range",
+    "status": "Challenge Status",
+    "sort_options": {
+      "volume": "🔥 24h Volume",
+      "latest": "⚡ Latest",
+      "intense": "💥 Most Intense"
+    },
+    "time_options": {
+      "hour": "⏰ Within 24h",
+      "day": "📅 Within 7 days",
+      "week": "🗓️ Within 30 days",
+      "all": "🌍 All Time"
+    },
+    "status_options": {
+      "all": "✨ All Challenges",
+      "active": "🟢 Active",
+      "ended": "🔴 Ended"
+    },
+    "active_filters": {
+      "latest": "⚡ Latest",
+      "intense": "💥 Most Intense",
+      "hour": "⏰ Within 24h",
+      "day": "📅 Within 7 days",
+      "week": "🗓️ Within 30 days",
+      "active": "🟢 Active",
+      "ended": "🔴 Ended"
+    }
+  },
+  "tabs": {
+    "custom": "Custom",
+    "hot": "Hot",
+    "ending": "Ending Soon"
+  },
+  "empty_state": {
+    "title": "No Challenges"
+  }
+}

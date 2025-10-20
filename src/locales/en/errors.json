@@ -1,0 +1,44 @@
+{
+  "network": {
+    "connection_failed": "Network connection failed",
+    "timeout": "Request timeout",
+    "server_error": "Server error",
+    "not_found": "Resource not found",
+    "unauthorized": "Unauthorized access",
+    "forbidden": "Access forbidden"
+  },
+  "wallet": {
+    "not_connected": "Wallet not connected",
+    "connection_failed": "Wallet connection failed",
+    "transaction_failed": "Transaction failed",
+    "insufficient_balance": "Insufficient balance",
+    "user_rejected": "User rejected the transaction",
+    "network_mismatch": "Network mismatch"
+  },
+  "validation": {
+    "required_field": "This field is required",
+    "invalid_email": "Invalid email format",
+    "invalid_amount": "Invalid amount",
+    "invalid_date": "Invalid date",
+    "min_length": "Must be at least {{min}} characters",
+    "max_length": "Must not exceed {{max}} characters",
+    "invalid_format": "Invalid format"
+  },
+  "challenge": {
+    "not_found": "Challenge not found",
+    "already_joined": "You have already joined this challenge",
+    "cannot_join": "Cannot join this challenge",
+    "deadline_passed": "Challenge deadline has passed",
+    "insufficient_reward": "Insufficient reward amount",
+    "creation_failed": "Failed to create challenge",
+    "submission_failed": "Submission failed"
+  },
+  "general": {
+    "unknown_error": "Unknown error",
+    "try_again": "Please try again",
+    "contact_support": "Please contact support",
+    "loading_failed": "Loading failed",
+    "save_failed": "Save failed",
+    "delete_failed": "Delete failed"
+  }
+}
