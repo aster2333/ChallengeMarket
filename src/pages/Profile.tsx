@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, ChangeEvent } from 'react';
+import { PublicKey } from '@solana/web3.js';
 import { 
   UserIcon, 
-  TrophyIcon, 
+  TrophyIcon,
   CurrencyDollarIcon,
-  ChartBarIcon,
   ClockIcon,
   CheckCircleIcon,
   XCircleIcon,
@@ -23,6 +23,7 @@ import { useStore } from '../store/useStore';
 import { useSolana } from '../../components/solana-provider';
 import { useWalletConnect } from '../providers/WalletConnectProvider';
 import { useLocalWallet } from '../providers/LocalWalletProvider';
+import { useErrorHandler } from '../hooks/useErrorHandler';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +33,16 @@ import {
   DropdownMenuTrigger
 } from '../components/ui/dropdown-menu';
 import { Button } from '../components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '../components/ui/dialog';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 
 interface UserChallenge {
   id: string;
@@ -63,6 +74,8 @@ interface UserNFT {
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
 }
 
+type ProfileTab = 'challenges' | 'bets' | 'nfts' | 'stats';
+
 interface UserStats {
   totalChallengesCreated: number;
   totalChallengesParticipated: number;
@@ -77,14 +90,33 @@ interface UserStats {
 const Profile: React.FC = () => {
   const { t } = useTranslation('profile');
   const { user } = useStore();
-  const { isConnected, publicKey, disconnect } = useSolana();
+  const {
+    isConnected,
+    publicKey,
+    disconnect,
+    balance,
+    refreshBalance,
+    requestAirdrop,
+    sendSol
+  } = useSolana();
   const { isConnected: wcConnected, disconnect: wcDisconnect } = useWalletConnect();
   const { isUnlocked, address: localAddress, lock } = useLocalWallet();
-  const [activeTab, setActiveTab] = useState<'challenges' | 'bets' | 'nfts' | 'stats'>('challenges');
+  const { handleError, handleSuccess } = useErrorHandler();
+  const [activeTab, setActiveTab] = useState<ProfileTab>('challenges');
   const [loading, setLoading] = useState(true);
-  
-  // 固定的SOL余额状态，避免跳动
-  const [balance, setBalance] = useState(12.50);
+  const [rechargeDialogOpen, setRechargeDialogOpen] = useState(false);
+  const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
+  const [airdropAmount, setAirdropAmount] = useState('1');
+  const [withdrawAmount, setWithdrawAmount] = useState('0.1');
+  const [withdrawAddress, setWithdrawAddress] = useState('');
+  const [processingRecharge, setProcessingRecharge] = useState(false);
+  const [processingWithdraw, setProcessingWithdraw] = useState(false);
+  const tabs: { key: ProfileTab; label: string }[] = [
+    { key: 'challenges', label: t('tabs.my_challenges') },
+    { key: 'bets', label: t('tabs.bet_records') },
+    { key: 'nfts', label: t('tabs.nft_collection') },
+    { key: 'stats', label: t('tabs.detailed_stats') }
+  ];
   
   const [userChallenges, setUserChallenges] = useState<UserChallenge[]>([]);
   const [userBets, setUserBets] = useState<UserBet[]>([]);
@@ -102,7 +134,7 @@ const Profile: React.FC = () => {
   // 获取当前连接的钱包地址
   const getCurrentAddress = () => {
     if (isConnected && publicKey) {
-      return publicKey.toString();
+      return publicKey;
     }
     if (wcConnected) {
       // WalletConnect 地址需要从相应的 provider 获取
@@ -129,11 +161,9 @@ const Profile: React.FC = () => {
     if (address) {
       try {
         await navigator.clipboard.writeText(address);
-        console.log('地址已复制到剪贴板');
-        // TODO: 显示成功提示
+        handleSuccess(t('overview.copy_success'));
       } catch (err) {
-        console.error('复制失败:', err);
-        // TODO: 显示错误提示
+        handleError(err, t('overview.copy_failed'));
       }
     }
   };
@@ -142,7 +172,7 @@ const Profile: React.FC = () => {
   const handleDisconnect = async () => {
     try {
       if (isConnected) {
-        await disconnect();
+        disconnect();
       }
       if (wcConnected) {
         await wcDisconnect();
@@ -150,13 +180,89 @@ const Profile: React.FC = () => {
       if (isUnlocked) {
         lock();
       }
-      console.log('钱包已断开连接');
-      // TODO: 显示断开连接成功提示
+      handleSuccess(t('overview.disconnect_success'));
     } catch (err) {
-      console.error('断开连接失败:', err);
-      // TODO: 显示错误提示
+      handleError(err, t('overview.disconnect_failed'));
     }
   };
+
+  const handleRecharge = async () => {
+    if (!isConnected || !publicKey) {
+      handleError(new Error('wallet not connected'), t('overview.connect_wallet'));
+      return;
+    }
+
+    const amount = parseFloat(airdropAmount);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      handleError(new Error('invalid amount'), t('overview.invalid_amount'));
+      return;
+    }
+
+    setProcessingRecharge(true);
+    try {
+      await requestAirdrop(amount);
+      handleSuccess(t('overview.recharge_success'));
+      setRechargeDialogOpen(false);
+    } catch (error) {
+      handleError(error, t('overview.recharge_error'));
+    } finally {
+      setProcessingRecharge(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!isConnected || !publicKey) {
+      handleError(new Error('wallet not connected'), t('overview.connect_wallet'));
+      return;
+    }
+
+    const amount = parseFloat(withdrawAmount);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      handleError(new Error('invalid amount'), t('overview.invalid_amount'));
+      return;
+    }
+
+    if (typeof balance === 'number' && amount > balance) {
+      handleError(new Error('insufficient balance'), t('overview.insufficient_balance'));
+      return;
+    }
+
+    try {
+      new PublicKey(withdrawAddress.trim());
+    } catch (error) {
+      handleError(error, t('overview.invalid_address'));
+      return;
+    }
+
+    setProcessingWithdraw(true);
+    try {
+      await sendSol(withdrawAddress.trim(), amount);
+      handleSuccess(t('overview.withdraw_success'));
+      setWithdrawDialogOpen(false);
+      setWithdrawAddress('');
+    } catch (error) {
+      handleError(error, t('overview.withdraw_error'));
+    } finally {
+      setProcessingWithdraw(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      refreshBalance().catch(error =>
+        handleError(error, t('overview.balance_refresh_failed'))
+      );
+    }
+  }, [isConnected, refreshBalance, handleError, t]);
+
+  const displayBalance = useMemo(() => {
+    if (typeof balance === 'number') {
+      return balance < 1 ? balance.toFixed(4) : balance.toFixed(2);
+    }
+    return '--';
+  }, [balance]);
 
   // 模拟数据加载
   useEffect(() => {
@@ -350,13 +456,15 @@ const Profile: React.FC = () => {
                 <div className="flex items-center space-x-3 mt-3">
                   <div className="flex items-center space-x-2">
                     <span className="text-2xl font-mono-bold text-foreground">
-                      {balance.toFixed(2)} SOL
+                      {displayBalance} SOL
                     </span>
                     <span className="text-sm text-muted-foreground font-body">{t('overview.total_balance')}</span>
                   </div>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-button"
+                    onClick={() => setRechargeDialogOpen(true)}
+                    disabled={!isConnected}
                   >
                     {t('overview.recharge')}
                   </Button>
@@ -408,20 +516,16 @@ const Profile: React.FC = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => {
-                  console.log('充值被点击');
-                  // TODO: 实现充值功能
-                }}
+                onClick={() => setRechargeDialogOpen(true)}
+                disabled={!isConnected}
               >
                 <CreditCardIcon className="mr-2 h-4 w-4" />
                 {t('overview.recharge')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => {
-                  console.log('提现被点击');
-                  // TODO: 实现提现功能
-                }}
+                onClick={() => setWithdrawDialogOpen(true)}
+                disabled={!isConnected}
               >
                 <ArrowUpIcon className="mr-2 h-4 w-4" />
                 {t('overview.withdraw')}
@@ -501,15 +605,10 @@ const Profile: React.FC = () => {
         <div className="bg-card rounded-xl shadow-sm mb-6">
           <div className="border-b border-border">
             <nav className="flex space-x-8 px-6 overflow-x-auto scrollbar-hide whitespace-nowrap">
-              {[
-                { key: 'challenges', label: t('tabs.my_challenges') },
-                { key: 'bets', label: t('tabs.bet_records') },
-                { key: 'nfts', label: t('tabs.nft_collection') },
-                { key: 'stats', label: t('tabs.detailed_stats') }
-              ].map(tab => (
+              {tabs.map(tab => (
                 <button
                   key={tab.key}
-                  onClick={() => setActiveTab(tab.key as any)}
+                  onClick={() => setActiveTab(tab.key)}
                   className={`py-4 px-2 border-b-2 font-button text-sm transition-colors flex-shrink-0 ${
                     activeTab === tab.key
                       ? 'border-purple-500 text-purple-600'
@@ -713,11 +812,108 @@ const Profile: React.FC = () => {
                 </div>
               </div>
             )}
-          </div>
         </div>
       </div>
+
+      <Dialog open={rechargeDialogOpen} onOpenChange={setRechargeDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('overview.recharge_title')}</DialogTitle>
+            <DialogDescription>{t('overview.recharge_desc')}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="recharge-amount">{t('overview.recharge_amount_label')}</Label>
+              <Input
+                id="recharge-amount"
+                type="number"
+                min="0"
+                step="0.1"
+                value={airdropAmount}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setAirdropAmount(event.target.value)
+                }
+                placeholder={t('overview.recharge_amount_placeholder')}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground font-body">
+              {t('overview.recharge_hint')}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setRechargeDialogOpen(false)}
+              disabled={processingRecharge}
+            >
+              {t('overview.cancel')}
+            </Button>
+            <Button
+              onClick={handleRecharge}
+              disabled={processingRecharge || !isConnected}
+            >
+              {processingRecharge ? t('overview.processing') : t('overview.confirm_recharge')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={withdrawDialogOpen} onOpenChange={setWithdrawDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('overview.withdraw_title')}</DialogTitle>
+            <DialogDescription>{t('overview.withdraw_desc')}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="withdraw-address">{t('overview.withdraw_address_label')}</Label>
+              <Input
+                id="withdraw-address"
+                value={withdrawAddress}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setWithdrawAddress(event.target.value)
+                }
+                placeholder={t('overview.withdraw_address_placeholder')}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="withdraw-amount">{t('overview.withdraw_amount_label')}</Label>
+              <Input
+                id="withdraw-amount"
+                type="number"
+                min="0"
+                step="0.01"
+                value={withdrawAmount}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setWithdrawAmount(event.target.value)
+                }
+                placeholder={t('overview.withdraw_amount_placeholder')}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground font-body">
+              {t('overview.withdraw_hint', { balance: displayBalance })}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setWithdrawDialogOpen(false)}
+              disabled={processingWithdraw}
+            >
+              {t('overview.cancel')}
+            </Button>
+            <Button
+              onClick={handleWithdraw}
+              disabled={processingWithdraw || !isConnected}
+            >
+              {processingWithdraw ? t('overview.processing') : t('overview.confirm_withdraw')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
-  );
+  </div>
+);
 };
 
 export default Profile;
