@@ -41,7 +41,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'zh',
+    fallbackLng: 'en',
     debug: process.env.NODE_ENV === 'development',
     
     // 语言检测配置

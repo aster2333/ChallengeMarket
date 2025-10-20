@@ -108,6 +108,7 @@ const ChallengeDetail: React.FC = () => {
   const { user } = useStore();
   const { handleError, handleSuccess, handlePromise } = useErrorHandler();
   const { t } = useTranslation('challenge');
+  const detail = (key: string) => t(`detail.${key}`);
   
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,7 +120,7 @@ const ChallengeDetail: React.FC = () => {
   const [newComment, setNewComment] = useState('');
 
   // 生成模拟价格数据（单调上涨对数曲线）
-  const generatePriceData = (): PriceData[] => {
+  const generatePriceData = (locale: string): PriceData[] => {
     const data: PriceData[] = [];
     const baseTime = Date.now() - 24 * 60 * 60 * 1000; // 24小时前
     
@@ -130,7 +131,7 @@ const ChallengeDetail: React.FC = () => {
       const noPrice = 0.05 + Math.log(i + 1) * 0.08 + Math.random() * 0.03;
       
       data.push({
-        time: time.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+        time: time.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }),
         yes: Math.round(yesPrice * 100) / 100,
         no: Math.round(noPrice * 100) / 100
       });
@@ -152,6 +153,8 @@ const ChallengeDetail: React.FC = () => {
       // 调试信息
       console.log('Current language:', currentLanguage, 'isEnglish:', isEnglish);
       
+      const locale = isEnglish ? 'en-US' : 'zh-CN';
+
       const mockChallenge: Challenge = {
         id: id || '1',
         title: isEnglish ? '30-Day 5KM Daily Running Challenge' : '30天每日跑步5公里挑战',
@@ -302,7 +305,7 @@ const ChallengeDetail: React.FC = () => {
       ];
       
       setChallenge(mockChallenge);
-      setPriceData(generatePriceData());
+      setPriceData(generatePriceData(locale));
       setRelatedChallenges(mockRelatedChallenges);
       setComments(mockComments);
       setHolders(mockHolders);
@@ -315,7 +318,7 @@ const ChallengeDetail: React.FC = () => {
 
   const handleJoinChallenge = async () => {
     if (!user) {
-      handleError(new Error(t('challenge.detail.connect_wallet_first')));
+      handleError(new Error(detail('connect_wallet_first')));
       return;
     }
 
@@ -327,19 +330,19 @@ const ChallengeDetail: React.FC = () => {
           resolve('success');
         }),
         {
-          loading: t('challenge.detail.joining_challenge'),
-          success: t('challenge.detail.join_success'),
-          error: t('challenge.detail.join_failed')
+          loading: detail('joining_challenge'),
+          success: detail('join_success'),
+          error: detail('join_failed')
         }
       );
     } catch (error) {
-      handleError(error, t('challenge.detail.join_failed'));
+      handleError(error, detail('join_failed'));
     }
   };
 
   const handleBankroll = async () => {
     if (!user) {
-      handleError(new Error(t('challenge.detail.connect_wallet_first')));
+      handleError(new Error(detail('connect_wallet_first')));
       return;
     }
 
@@ -351,13 +354,13 @@ const ChallengeDetail: React.FC = () => {
           resolve('success');
         }),
         {
-          loading: t('challenge.detail.bankrolling'),
-          success: t('challenge.detail.bankroll_success'),
-          error: t('challenge.detail.bankroll_failed')
+          loading: detail('bankrolling'),
+          success: detail('bankroll_success'),
+          error: detail('bankroll_failed')
         }
       );
     } catch (error) {
-      handleError(error, t('challenge.detail.bankroll_failed'));
+      handleError(error, detail('bankroll_failed'));
     }
   };
 
@@ -393,12 +396,12 @@ const ChallengeDetail: React.FC = () => {
       <div className="min-h-screen bg-background pt-16 pb-20 md:pb-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-foreground">{t('challenge.detail.challenge_not_exist')}</h2>
+            <h2 className="text-2xl font-bold text-foreground">{detail('challenge_not_exist')}</h2>
             <button
               onClick={() => navigate('/')}
               className="mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
             >
-              {t('challenge.detail.return_home')}
+              {detail('return_home')}
             </button>
           </div>
         </div>
@@ -418,7 +421,7 @@ const ChallengeDetail: React.FC = () => {
             className="mr-4 font-button"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('challenge.detail.back')}
+            {detail('back')}
           </Button>
         </div>
 
@@ -447,7 +450,7 @@ const ChallengeDetail: React.FC = () => {
               {challenge.creator.slice(0, 2)}
             </div>
             <div>
-              <div className="font-heading text-foreground">{t('challenge.detail.publisher')}</div>
+              <div className="font-heading text-foreground">{detail('publisher')}</div>
               <div className="text-sm text-muted-foreground font-mono">
                 {challenge.creator.slice(0, 8)}...{challenge.creator.slice(-6)}
               </div>
@@ -458,14 +461,14 @@ const ChallengeDetail: React.FC = () => {
             className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-button px-6 py-2"
           >
             <Trophy className="w-4 h-4 mr-2" />
-            {t('challenge.detail.bankroll')}
+            {detail('bankroll')}
           </Button>
         </div>
 
         {/* 价格变化图表 */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <h3 className="text-lg font-semibold mb-4">{t('challenge.detail.yes')}/{t('challenge.detail.no')} {t('challenge.detail.price_chart')}</h3>
+            <h3 className="text-lg font-semibold mb-4">{detail('yes')}/{detail('no')} {detail('price_chart')}</h3>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={priceData}>
@@ -486,7 +489,7 @@ const ChallengeDetail: React.FC = () => {
                     stroke="url(#yesGradient)"
                     strokeWidth={3}
                     dot={false}
-                    name={t('challenge.detail.yes')}
+                    name={detail('yes')}
                   />
                   <Line
                     type="monotone"
@@ -494,7 +497,7 @@ const ChallengeDetail: React.FC = () => {
                     stroke="url(#noGradient)"
                     strokeWidth={3}
                     dot={false}
-                    name={t('challenge.detail.no')}
+                    name={detail('no')}
                   />
                   <defs>
                     <linearGradient id="yesGradient" x1="0" y1="0" x2="1" y2="0">
@@ -512,11 +515,11 @@ const ChallengeDetail: React.FC = () => {
             <div className="flex justify-center space-x-8 mt-4">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-green-400 rounded-full"></div>
-                <span className="text-sm font-body text-muted-foreground">{t('challenge.detail.yes')}</span>
+                <span className="text-sm font-body text-muted-foreground">{detail('yes')}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-gradient-to-r from-red-500 to-red-400 rounded-full"></div>
-                <span className="text-sm font-body text-muted-foreground">{t('challenge.detail.no')}</span>
+                <span className="text-sm font-body text-muted-foreground">{detail('no')}</span>
               </div>
             </div>
           </CardContent>
@@ -530,13 +533,13 @@ const ChallengeDetail: React.FC = () => {
             disabled={challenge.currentParticipants >= challenge.maxParticipants}
           >
             <Users className="w-5 h-5 mr-2" />
-            {challenge.currentParticipants >= challenge.maxParticipants ? t('challenge.detail.challenge_full_text') : t('challenge.detail.accept_challenge')}
+            {challenge.currentParticipants >= challenge.maxParticipants ? detail('challenge_full_text') : detail('accept_challenge')}
           </Button>
         </div>
 
         {/* 相关挑战 */}
         <div className="mb-6">
-          <h2 className="text-xl font-heading text-foreground mb-4">{t('challenge.detail.related_challenges')}</h2>
+          <h2 className="text-xl font-heading text-foreground mb-4">{detail('related_challenges')}</h2>
           <div className="space-y-3">
             {relatedChallenges.map(relatedChallenge => (
               <Card key={relatedChallenge.id} className="hover:shadow-md transition-shadow cursor-pointer">
@@ -556,7 +559,7 @@ const ChallengeDetail: React.FC = () => {
                         </span>
                         <span className="text-sm text-muted-foreground font-body">
                           <Users className="w-4 h-4 inline mr-1" />
-                          {relatedChallenge.participants}{t('challenge.detail.people')}
+                          {relatedChallenge.participants}{detail('people')}
                         </span>
                       </div>
                     </div>
@@ -577,15 +580,15 @@ const ChallengeDetail: React.FC = () => {
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="comments" className="font-button">
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  {t('challenge.detail.comments')}
+                  {detail('comments')}
                 </TabsTrigger>
                 <TabsTrigger value="holders" className="font-button">
                   <TrendingUp className="w-4 h-4 mr-2" />
-                  {t('challenge.detail.holders')}
+                  {detail('holders')}
                 </TabsTrigger>
                 <TabsTrigger value="activities" className="font-button">
                   <Star className="w-4 h-4 mr-2" />
-                  {t('challenge.detail.activities')}
+                  {detail('activities')}
                 </TabsTrigger>
               </TabsList>
 
@@ -600,7 +603,7 @@ const ChallengeDetail: React.FC = () => {
                       <Input
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
-                        placeholder={t('challenge.detail.write_comment')}
+                        placeholder={detail('write_comment')}
                         className="mb-2"
                       />
                       <Button
@@ -609,7 +612,7 @@ const ChallengeDetail: React.FC = () => {
                         disabled={!newComment.trim()}
                         className="font-button"
                       >
-                        {t('challenge.detail.post_comment')}
+                        {detail('post_comment')}
                       </Button>
                     </div>
                   </div>
@@ -656,11 +659,11 @@ const ChallengeDetail: React.FC = () => {
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-mono">
-                          <span className="text-green-600">{t('challenge.detail.yes')}: {holder.yesShares}</span>
-                          <span className="text-red-600 ml-2">{t('challenge.detail.no')}: {holder.noShares}</span>
+                          <span className="text-green-600">{detail('yes')}: {holder.yesShares}</span>
+                          <span className="text-red-600 ml-2">{detail('no')}: {holder.noShares}</span>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {t('challenge.detail.total_value')}: {holder.totalValue} SOL
+                          {detail('total_value')}: {holder.totalValue} SOL
                         </div>
                       </div>
                     </div>
