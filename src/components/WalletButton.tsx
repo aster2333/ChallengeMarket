@@ -21,7 +21,7 @@ export const WalletButton: React.FC = () => {
         </div>
         <button
           onClick={disconnect}
-          className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+          className="p-2 text-muted-foreground hover:text-destructive transition-colors"
           title="断开钱包"
         >
           <LogOut size={16} />
