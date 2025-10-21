@@ -1,6 +1,8 @@
 {
   "create": {
     "title": "Create Challenge",
+    "back": "Back",
+    "connect_wallet": "Please connect your wallet before creating a challenge",
     "form": {
       "challenge_title": "Challenge Title",
       "challenge_title_placeholder": "Enter challenge title",
@@ -26,6 +28,7 @@
       "prize_pool": "Prize Pool SOL",
       "prize_pool_placeholder": "Enter amount",
       "prize_pool_hint": "Minimum 0.05 SOL, will be deducted from your wallet",
+      "duration_hours": "Duration (hours)",
       "hours": "Hours",
       "days": "Days",
       "creating": "Creating...",
@@ -33,15 +36,25 @@
       "random_stop": "Random Stop",
       "random_stop_enabled": "Enabled",
       "random_stop_disabled": "Disabled",
-      "random_stop_hint": "When enabled, the challenge may end randomly within the duration"
+      "random_stop_hint": "When enabled, the challenge may end randomly within the duration",
+      "allow_random_stop": "Allow random stop",
+      "treasury_address": "Treasury address",
+      "cover": "Cover image",
+      "cover_hint": "Upload a banner to represent your challenge"
     },
     "categories": {
       "fitness": "Fitness & Sports",
       "learning": "Learning & Education",
       "creative": "Creative & Design",
       "social": "Social Activities",
+      "business": "Business & Finance",
       "technology": "Technology & Development",
       "other": "Other"
+    },
+    "errors": {
+      "treasury_required": "Treasury address is required",
+      "invalid_prize_pool": "Please enter a valid prize pool",
+      "invalid_duration": "Please enter a valid duration"
     },
     "difficulty": {
       "easy": "Easy",

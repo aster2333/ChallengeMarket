@@ -1,6 +1,8 @@
 {
   "create": {
     "title": "创建挑战",
+    "back": "返回",
+    "connect_wallet": "请先连接钱包再创建挑战",
     "form": {
       "challenge_title": "挑战标题",
       "challenge_title_placeholder": "输入挑战标题",
@@ -26,6 +28,7 @@
       "prize_pool": "奖池 SOL",
       "prize_pool_placeholder": "输入金额",
       "prize_pool_hint": "最低 0.05 SOL，将从你的钱包中扣除",
+      "duration_hours": "挑战时长（小时）",
       "hours": "小时",
       "days": "天",
       "creating": "创建中...",
@@ -33,15 +36,25 @@
       "random_stop": "随机停止",
       "random_stop_enabled": "已启用",
       "random_stop_disabled": "已禁用",
-      "random_stop_hint": "启用后，挑战可能会在持续时间内随机结束"
+      "random_stop_hint": "启用后，挑战可能会在持续时间内随机结束",
+      "allow_random_stop": "允许随机结束",
+      "treasury_address": "奖池地址",
+      "cover": "挑战封面",
+      "cover_hint": "上传一张封面图片展示挑战"
     },
     "categories": {
       "fitness": "健身运动",
       "learning": "学习教育",
       "creative": "创意设计",
       "social": "社交活动",
+      "business": "商业金融",
       "technology": "技术开发",
       "other": "其他"
+    },
+    "errors": {
+      "treasury_required": "请填写奖池地址",
+      "invalid_prize_pool": "请输入有效的奖池金额",
+      "invalid_duration": "请输入有效的挑战时长"
     },
     "difficulty": {
       "easy": "简单",

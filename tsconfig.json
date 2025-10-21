@@ -26,6 +26,15 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "react-i18next": [
+        "./src/lib/react-i18next-shim"
+      ],
+      "i18next": [
+        "./src/lib/i18next-shim"
+      ],
+      "i18next-browser-languagedetector": [
+        "./src/lib/i18next-browser-languagedetector-shim"
       ]
     }
   },
