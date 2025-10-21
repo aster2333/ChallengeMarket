@@ -27,7 +27,10 @@ export function useErrorHandler() {
     } else if (typeof error === 'string') {
       errorMessage = error;
     } else if (error && typeof error === 'object' && 'message' in error) {
-      errorMessage = (error as any).message || defaultMessage;
+      const messageValue = (error as { message?: unknown }).message;
+      if (typeof messageValue === 'string' && messageValue.trim().length > 0) {
+        errorMessage = messageValue;
+      }
     }
 
     // 使用自定义消息（如果提供）

@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { RefreshCw, Copy, Check, Wifi, WifiOff, AlertCircle, Smartphone } from 'lucide-react';
 import { useWalletConnect } from '../providers/WalletConnectProvider';
 import { toast } from 'sonner';
@@ -43,22 +42,21 @@ export function QRCodeDisplay({
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'waiting' | 'connected' | 'failed'>('idle');
   const [copied, setCopied] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 生成二维码
-  const generateQRCode = async () => {
+  const generateQRCode = useCallback(async () => {
     try {
       setIsGenerating(true);
       setConnectionStatus('waiting');
-      
+
       // 创建 WalletConnect 会话
       const sessionUri = await createSession();
       setUri(sessionUri);
-      
+
       // 生成二维码 - 根据屏幕尺寸调整大小
       const isMobile = window.innerWidth < 640;
       const qrCodeSize = isMobile ? 260 : 300;
-      
+
       const qrCodeOptions = {
         width: qrCodeSize,
         margin: 2,
@@ -68,21 +66,22 @@ export function QRCodeDisplay({
         },
         errorCorrectionLevel: 'M' as const
       };
-      
+
       const dataURL = await QRCode.toDataURL(sessionUri, qrCodeOptions);
       setQrCodeDataURL(dataURL);
-      
+
       console.log('QR Code generated for URI:', sessionUri);
-      
+
     } catch (error) {
       console.error('Failed to generate QR code:', error);
+      const normalizedError = error instanceof Error ? error : new Error(String(error));
       setConnectionStatus('failed');
-      handleError(error as Error);
-      onConnectionError?.(error as Error);
+      handleError(normalizedError);
+      onConnectionError?.(normalizedError);
     } finally {
       setIsGenerating(false);
     }
-  };
+  }, [createSession, handleError, onConnectionError]);
 
   // 复制 URI 到剪贴板
   const copyURI = useCallback(async () => {
@@ -129,7 +128,7 @@ export function QRCodeDisplay({
     } finally {
       setIsGenerating(false);
     }
-  }, [createSession, t]);
+  }, [createSession, generateQRCode, t]);
 
   // 监听连接状态变化
   useEffect(() => {
@@ -160,7 +159,7 @@ export function QRCodeDisplay({
   // 组件挂载时生成二维码
   useEffect(() => {
     generateQRCode();
-  }, []);
+  }, [generateQRCode]);
 
   // 渲染连接状态指示器
   const renderStatusIndicator = () => {

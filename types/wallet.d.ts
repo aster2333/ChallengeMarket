@@ -1,38 +1,26 @@
+import type { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js';
+
+interface InjectedSolanaProvider {
+  isConnected: boolean;
+  publicKey?: PublicKey;
+  connect: () => Promise<{ publicKey: PublicKey }>;
+  disconnect: () => Promise<void>;
+  signTransaction: <T extends Transaction | VersionedTransaction>(transaction: T) => Promise<T>;
+  signAndSendTransaction: (
+    transaction: Transaction | VersionedTransaction
+  ) => Promise<{ signature: string }>;
+  signMessage: (message: Uint8Array) => Promise<{ signature: Uint8Array }>;
+}
+
 // Type declarations for traditional Solana wallets
 declare global {
   interface Window {
     phantom?: {
-      solana?: {
-        isPhantom: boolean;
-        connect: () => Promise<{ publicKey: any }>;
-        disconnect: () => Promise<void>;
-        signTransaction: (transaction: any) => Promise<any>;
-        signAndSendTransaction: (transaction: any) => Promise<any>;
-        signMessage: (message: Uint8Array) => Promise<{ signature: Uint8Array }>;
-        publicKey?: any;
-        isConnected: boolean;
-      };
+      solana?: InjectedSolanaProvider & { isPhantom: boolean };
     };
-    solflare?: {
-      isSolflare: boolean;
-      connect: () => Promise<{ publicKey: any }>;
-      disconnect: () => Promise<void>;
-      signTransaction: (transaction: any) => Promise<any>;
-      signAndSendTransaction: (transaction: any) => Promise<any>;
-      signMessage: (message: Uint8Array) => Promise<{ signature: Uint8Array }>;
-      publicKey?: any;
-      isConnected: boolean;
-    };
-    backpack?: {
-      isSolana: boolean;
-      connect: () => Promise<{ publicKey: any }>;
-      disconnect: () => Promise<void>;
-      signTransaction: (transaction: any) => Promise<any>;
-      signAndSendTransaction: (transaction: any) => Promise<any>;
-      signMessage: (message: Uint8Array) => Promise<{ signature: Uint8Array }>;
-      publicKey?: any;
-      isConnected: boolean;
-    };
+    solflare?: InjectedSolanaProvider & { isSolflare: boolean };
+    backpack?: InjectedSolanaProvider & { isSolana: boolean };
+    coinbaseSolana?: InjectedSolanaProvider;
   }
 }
 

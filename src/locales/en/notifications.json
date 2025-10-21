@@ -1,0 +1,62 @@
+{
+  "title": "Notifications",
+  "description": "Keep track of activity across your challenges and wallets.",
+  "filters": {
+    "all": "All",
+    "unread": "Unread",
+    "votes": "Voting",
+    "results": "Results",
+    "rewards": "Rewards",
+    "system": "Updates"
+  },
+  "sections": {
+    "today": "Today",
+    "recent": "Recent",
+    "earlier": "Earlier"
+  },
+  "meta": {
+    "just_now": "Just now"
+  },
+  "empty": {
+    "title": "You're all caught up",
+    "description": "We'll let you know as soon as something needs your attention."
+  },
+  "actions": {
+    "mark_all_read": "Mark all as read",
+    "mark_read": "Mark as read",
+    "view_details": "View details"
+  },
+  "types": {
+    "votes": "Voting",
+    "results": "Results",
+    "rewards": "Rewards",
+    "system": "Updates"
+  },
+  "challenge_names": {
+    "ai_adoption": "AI Adoption Index",
+    "coding_marathon": "Coding Marathon",
+    "ecosystem_health": "Solana Ecosystem Health"
+  },
+  "items": {
+    "vote_open": {
+      "title": "Voting opened: {{challenge}}",
+      "description": "Community voting for {{challenge}} is now live. Submit your position before {{deadline}}.",
+      "action": "Go to challenge"
+    },
+    "result_posted": {
+      "title": "Challenge settled: {{challenge}}",
+      "description": "The judges have published final results for {{challenge}}. Review the settlement details and payouts.",
+      "action": "Review results"
+    },
+    "reward_credited": {
+      "title": "Reward received",
+      "description": "{{amount}} has been credited to your wallet for {{challenge}}. Thanks for contributing!",
+      "action": "View wallet"
+    },
+    "system_digest": {
+      "title": "Weekly digest",
+      "description": "Catch up on new challenges, trending markets, and product updates tailored for you.",
+      "action": "Explore updates"
+    }
+  }
+}

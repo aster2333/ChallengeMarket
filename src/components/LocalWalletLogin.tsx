@@ -24,7 +24,7 @@ export function LocalWalletLogin({ onSuccess, onCancel }: LocalWalletLoginProps)
     isUnlocked,
     currentWallet 
   } = useLocalWallet();
-  const { handleError, handleSuccess } = useErrorHandler();
+  const { handleSuccess } = useErrorHandler();
   const { t } = useTranslation();
 
   const [password, setPassword] = useState('');
@@ -72,9 +72,10 @@ export function LocalWalletLogin({ onSuccess, onCancel }: LocalWalletLoginProps)
       await unlockWallet(firstWallet.id, password);
       handleSuccess(t('wallet.wallet_unlock_success'));
       onSuccess();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Login failed:', err);
-      setError(err.message || t('wallet.password_error'));
+      const message = err instanceof Error ? err.message : null;
+      setError(message || t('wallet.password_error'));
     } finally {
       setIsLoading(false);
     }
@@ -109,9 +110,10 @@ export function LocalWalletLogin({ onSuccess, onCancel }: LocalWalletLoginProps)
       await createWallet(password, walletName.trim());
       handleSuccess(t('wallet.wallet_create_success'));
       onSuccess();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Registration failed:', err);
-      setError(err.message || t('wallet.create_wallet_failed'));
+      const message = err instanceof Error ? err.message : null;
+      setError(message || t('wallet.create_wallet_failed'));
     } finally {
       setIsLoading(false);
     }

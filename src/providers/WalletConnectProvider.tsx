@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { Web3Wallet, IWeb3Wallet } from '@walletconnect/web3wallet';
 import { Core } from '@walletconnect/core';
 import { SessionTypes, SignClientTypes } from '@walletconnect/types';
-import { Connection, PublicKey, Transaction } from '@solana/web3.js';
+import { Transaction } from '@solana/web3.js';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 
 // WalletConnect 项目配置
@@ -104,10 +104,10 @@ export function WalletConnectProvider({ children }: { children: React.ReactNode 
   }, []);
 
   // 错误处理函数
-  const handleConnectionError = useCallback((error: any, context: string) => {
+  const handleConnectionError = useCallback((error: unknown, context: string) => {
     const now = Date.now();
     const timeSinceLastError = now - lastErrorTimeRef.current;
-    
+
     // 防止频繁错误日志（1秒内不重复输出相同类型错误）
     if (timeSinceLastError > 1000) {
       console.error(`WalletConnect ${context}:`, error);
@@ -229,7 +229,7 @@ export function WalletConnectProvider({ children }: { children: React.ReactNode 
         }
       });
 
-      wallet.on('session_request', async (requestEvent) => {
+      wallet.on('session_request', async () => {
         if (import.meta.env.DEV) {
           console.log('Session request received');
         }
@@ -498,7 +498,7 @@ export function WalletConnectProvider({ children }: { children: React.ReactNode 
       // 这里需要实现具体的交易签名和发送逻辑
       // 只在开发环境输出交易发送日志
       if (import.meta.env.DEV) {
-        console.log('Signing and sending transaction via WalletConnect...');
+        console.log('Signing and sending transaction via WalletConnect...', transaction);
       }
       
       // 暂时返回模拟的交易哈希
@@ -514,7 +514,7 @@ export function WalletConnectProvider({ children }: { children: React.ReactNode 
   // 组件挂载时初始化，添加去重机制和防抖
   useEffect(() => {
     let isInitializing = false;
-    let initTimeout: NodeJS.Timeout;
+    let initTimeout: NodeJS.Timeout | null = null;
     
     const initWithDeduplication = async () => {
       if (isInitializing || web3wallet) return;
@@ -531,10 +531,11 @@ export function WalletConnectProvider({ children }: { children: React.ReactNode 
     initTimeout = setTimeout(() => {
       initWithDeduplication();
     }, 100);
-    
+
     return () => {
       if (initTimeout) {
         clearTimeout(initTimeout);
+        initTimeout = null;
       }
     };
   }, [initializeWalletConnect, web3wallet]);

@@ -1,0 +1,62 @@
+{
+  "title": "通知中心",
+  "description": "实时掌握挑战和钱包的最新动态。",
+  "filters": {
+    "all": "全部",
+    "unread": "未读",
+    "votes": "投票",
+    "results": "结果",
+    "rewards": "奖励",
+    "system": "更新"
+  },
+  "sections": {
+    "today": "今天",
+    "recent": "最近",
+    "earlier": "更早"
+  },
+  "meta": {
+    "just_now": "刚刚"
+  },
+  "empty": {
+    "title": "目前没有新通知",
+    "description": "有新的动态时我们会第一时间提醒你。"
+  },
+  "actions": {
+    "mark_all_read": "全部标记已读",
+    "mark_read": "标记已读",
+    "view_details": "查看详情"
+  },
+  "types": {
+    "votes": "投票",
+    "results": "结果",
+    "rewards": "奖励",
+    "system": "更新"
+  },
+  "challenge_names": {
+    "ai_adoption": "AI 普及指数",
+    "coding_marathon": "编程马拉松",
+    "ecosystem_health": "Solana 生态健康"
+  },
+  "items": {
+    "vote_open": {
+      "title": "投票已开启：{{challenge}}",
+      "description": "{{challenge}} 的社区投票现已开启，请在 {{deadline}} 之前提交你的预测。",
+      "action": "前往挑战"
+    },
+    "result_posted": {
+      "title": "挑战已结算：{{challenge}}",
+      "description": "评审团已公布 {{challenge}} 的最终结果，查看结算详情和奖励分配。",
+      "action": "查看结果"
+    },
+    "reward_credited": {
+      "title": "奖励已到账",
+      "description": "{{challenge}} 的奖励 {{amount}} 已发放至你的钱包，感谢你的参与！",
+      "action": "查看钱包"
+    },
+    "system_digest": {
+      "title": "每周简报",
+      "description": "查阅为你精选的热门挑战、市场动态以及最新功能更新。",
+      "action": "了解更多"
+    }
+  }
+}

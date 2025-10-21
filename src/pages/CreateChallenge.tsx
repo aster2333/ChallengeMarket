@@ -61,7 +61,7 @@ const CreateChallenge: React.FC = () => {
     { id: 'default3', name: '默认图片 3', url: defaultImage3 }
   ];
 
-  const handleInputChange = (field: keyof ChallengeForm, value: any) => {
+  const handleInputChange = <K extends keyof ChallengeForm>(field: K, value: ChallengeForm[K]) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -133,11 +133,11 @@ const CreateChallenge: React.FC = () => {
     
     try {
       await handlePromise(
-        new Promise(async (resolve) => {
-          await new Promise(r => setTimeout(r, 2000));
+        (async () => {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
           console.log('创建挑战:', form);
-          resolve('success');
-        }),
+          return 'success';
+        })(),
         {
           loading: '正在创建挑战...',
           success: '挑战创建成功！',
@@ -343,7 +343,7 @@ const CreateChallenge: React.FC = () => {
                   />
                   <select
                     value={form.durationType}
-                    onChange={(e) => handleInputChange('durationType', e.target.value)}
+                    onChange={(e) => handleInputChange('durationType', e.target.value as 'hours' | 'days')}
                     className="px-3 py-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent font-body"
                   >
                     <option value="hours">{t('create.form.hours')}</option>

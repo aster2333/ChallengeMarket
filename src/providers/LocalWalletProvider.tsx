@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Keypair, Connection, Transaction, PublicKey } from '@solana/web3.js';
+import { Keypair, Connection, Transaction } from '@solana/web3.js';
 import { 
   validatePrivateKey, 
   createKeypairFromPrivateKey, 

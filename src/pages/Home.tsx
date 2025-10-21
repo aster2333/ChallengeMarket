@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, TrendingUp, Clock, Trophy, Search, Filter, ChevronDown } from 'lucide-react';
 import { ChallengeCard } from '../components/ChallengeCard';
@@ -17,10 +17,9 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<'volume' | 'latest' | 'intense'>('volume');
   const [duration, setDuration] = useState<'hour' | 'day' | 'week' | 'month' | 'all'>('all');
   const [status, setStatus] = useState<'active' | 'ended' | 'all'>('all');
-  const [subCategory, setSubCategory] = useState<'featured' | 'new_deals' | 'new_created' | 'trending' | 'highest_market_cap'>('featured');
-
   // 模拟数据 - 增加更多挑战事件
-  const mockChallenges: Challenge[] = [
+  const mockChallenges = useMemo<Challenge[]>(
+    () => [
     {
       id: '1',
       title: '俯卧撑挑战',
@@ -291,7 +290,9 @@ export default function Home() {
       yesVotes: 160,
       delayVotes: 90,
     },
-  ];
+  ],
+    []
+  );
 
   useEffect(() => {
     // 模拟加载数据
@@ -300,7 +301,7 @@ export default function Home() {
       setChallenges(mockChallenges);
       setIsLoading(false);
     }, 1000);
-  }, [setChallenges, setIsLoading]);
+  }, [mockChallenges, setChallenges, setIsLoading]);
 
   const filteredChallenges = challenges.filter(challenge => {
     // 首先根据搜索查询过滤

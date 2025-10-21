@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { 
   CheckCircleIcon, 
   XCircleIcon, 
@@ -29,7 +29,6 @@ interface Reward {
 
 const Settlement: React.FC = () => {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const { user } = useStore()
   const { handleError, handleSuccess, handlePromise } = useErrorHandler()
   const { t } = useTranslation('settlement')
@@ -113,13 +112,13 @@ const Settlement: React.FC = () => {
     
     try {
       await handlePromise(
-        new Promise(async (resolve) => {
+        (async () => {
           // TODO: 集成Solana智能合约投票功能
           console.log('投票:', selectedVote)
-          await new Promise(r => setTimeout(r, 1000))
+          await new Promise((resolve) => setTimeout(resolve, 1000))
           setHasVoted(true)
-          resolve('success')
-        }),
+          return 'success'
+        })(),
         {
           loading: t('voting.submitting'),
           success: t('voting.vote_success'),

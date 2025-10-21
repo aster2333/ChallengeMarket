@@ -16,13 +16,11 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { 
-  Wallet, 
-  Shield, 
-  Clock, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
-  Copy, 
+  Wallet,
+  Shield,
+  Clock,
+  Trash2,
+  Copy,
   Settings,
   Lock,
   Unlock,
@@ -55,13 +53,12 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
     disconnectSession: wcDisconnect,
     accounts: wcAccounts 
   } = useWalletConnect();
-  const { 
-    wallets, 
-    currentWallet, 
-    isUnlocked: isLocked, 
-    unlockWallet: unlock, 
-    lockWallet: lock, 
-    removeWallet,
+  const {
+    wallets,
+    currentWallet,
+    isUnlocked: isLocked,
+    unlockWallet: unlock,
+    lockWallet: lock,
     settings,
     updateSettings
   } = useLocalWallet();
@@ -73,7 +70,6 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
   const { handleSuccess, handleError, handleWarning } = useErrorHandler();
 
   const [activeTab, setActiveTab] = useState<'wallets' | 'security' | 'sessions'>('wallets');
-  const [showPrivateKey, setShowPrivateKey] = useState(false);
   const [unlockPassword, setUnlockPassword] = useState('');
   const [newTimeout, setNewTimeout] = useState((sessionTimeout || 30).toString());
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
@@ -95,7 +91,12 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
     handleSuccess(t('wallet.wallet_locked'));
   };
 
-  const handleRemoveWallet = async (walletId: string) => {
+  const handleRemoveWallet = async (walletId: string | null) => {
+    if (!walletId) {
+      handleError(new Error('Missing wallet id'), t('wallet.remove_wallet_failed'));
+      return;
+    }
+
     try {
       // 需要密码来删除钱包，这里暂时跳过实际删除
       // await removeWallet(walletId, password);
@@ -407,9 +408,6 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
                           <h4 className="font-medium break-all">{session.peer.metadata.name}</h4>
                           <p className="text-sm text-gray-500 break-all">
                             {session.peer.metadata.url}
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            {t('wallet.connection_time')}: {new Date((session as any).createdAt * 1000).toLocaleString()}
                           </p>
                         </div>
                         <Button

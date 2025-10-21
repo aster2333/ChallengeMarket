@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Clock, Users, DollarSign, TrendingUp, Trophy } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Challenge } from '../store/useStore';
 import { Button } from './ui/button';
@@ -82,45 +82,15 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
     return `${hours}h ${minutes}m`;
   };
 
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'default';
-      case 'voting':
-        return 'secondary';
-      case 'completed':
-        return 'outline';
-      case 'expired':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active':
-        return t('challenge_card.status.active');
-      case 'voting':
-        return t('challenge_card.status.voting');
-      case 'completed':
-        return t('challenge_card.status.completed');
-      case 'expired':
-        return t('challenge_card.status.expired');
-      default:
-        return t('challenge_card.status.unknown');
-    }
-  };
-
   // 按钮点击事件处理函数
   const handleBuyYes = (e: React.MouseEvent) => {
     e.stopPropagation(); // 阻止事件冒泡，防止触发卡片点击
-    console.log('BUY YES clicked for challenge:', challenge.id);
+    navigate(`/challenge/${challenge.id}?action=buy&side=yes`);
   };
 
   const handleBuyDelay = (e: React.MouseEvent) => {
     e.stopPropagation(); // 阻止事件冒泡，防止触发卡片点击
-    console.log('BUY DELAY clicked for challenge:', challenge.id);
+    navigate(`/challenge/${challenge.id}?action=buy&side=no`);
   };
 
   const handleChallengeReward = (e: React.MouseEvent) => {

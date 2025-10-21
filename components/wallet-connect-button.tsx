@@ -48,7 +48,7 @@ function WalletMenuItem({
   wallet: UiWallet;
   onConnect: () => void;
 }) {
-  const { setWalletAndAccount } = useSolana();
+  const { setWalletAndAccount, refreshBalance } = useSolana();
   const [isConnecting, connect] = useConnect(wallet);
 
   const handleConnect = async () => {
@@ -60,6 +60,9 @@ function WalletMenuItem({
       if (accounts && accounts.length > 0) {
         const account = accounts[0];
         setWalletAndAccount(wallet, account);
+        await refreshBalance().catch((error) =>
+          console.warn("Failed to refresh balance after connect", error)
+        );
         onConnect();
       }
     } catch (err) {
@@ -88,13 +91,17 @@ function DisconnectButton({
   wallet: UiWallet;
   onDisconnect: () => void;
 }) {
-  const { setWalletAndAccount } = useSolana();
+  const { setWalletAndAccount, refreshBalance } = useSolana();
+  const { t } = useTranslation();
   const [isDisconnecting, disconnect] = useDisconnect(wallet);
 
   const handleDisconnect = async () => {
     try {
       await disconnect();
       setWalletAndAccount(null, null);
+      refreshBalance().catch((error) =>
+        console.warn("Failed to clear balance after disconnect", error)
+      );
       onDisconnect();
     } catch (err) {
       console.error("Failed to disconnect wallet:", err);

@@ -2,9 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { EnhancedWalletButton } from './EnhancedWalletButton';
-import { Plus, Trophy, Search, Bell, Menu, Globe, Moon, Sun, BookOpen, Info, MessageCircle } from 'lucide-react';
+import { Bell, Menu, Globe, Moon, Sun, BookOpen, Info, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -175,26 +174,26 @@ const NotificationButton: React.FC = () => {
   const { isConnected } = useSolana();
   const { isConnected: wcConnected } = useWalletConnect();
   const { isUnlocked } = useLocalWallet();
-  
+  const { t } = useTranslation('common');
+
   // 检查是否有任何钱包连接
   const hasConnection = isConnected || wcConnected || isUnlocked;
-  
+
   // 只有在用户登录时才显示通知按钮
   if (!hasConnection) {
     return null;
   }
-  
+
   return (
     <Button
       variant="ghost"
       size="sm"
       className="p-2 hover:bg-accent rounded-full"
-      onClick={() => {
-        // TODO: 实现通知功能
-        console.log('通知按钮被点击');
-      }}
+      asChild
     >
-      <Bell className="w-5 h-5 text-foreground" />
+      <Link to="/notifications" aria-label={t('navbar.notifications')} className="relative">
+        <Bell className="w-5 h-5 text-foreground" />
+      </Link>
     </Button>
   );
 };
@@ -221,23 +220,20 @@ export const Navbar: React.FC<NavbarProps> = ({ hideBottomNav = false }) => {
   const { t } = useTranslation('common');
 
   const navItems = [
-    { 
-      path: '/', 
-      label: t('navbar.home'), 
-      icon: Plus, // 这个不会被使用，因为我们会用自定义逻辑
+    {
+      path: '/',
+      label: t('navbar.home'),
       customIcon: { unselected: HomeUnselected, selected: HomeSelected }
     },
-    { 
-      path: '/create', 
-      label: t('navbar.create'), 
-      icon: Plus, 
+    {
+      path: '/create',
+      label: t('navbar.create'),
       isSpecial: true,
       customIcon: { unselected: CreateIcon, selected: CreateIcon }
     },
-    { 
-      path: '/profile', 
-      label: t('navbar.profile'), 
-      icon: Plus, // 这个不会被使用，因为我们会用自定义逻辑
+    {
+      path: '/profile',
+      label: t('navbar.profile'),
       customIcon: { unselected: MeUnselected, selected: MeSelected }
     },
   ];
@@ -263,7 +259,7 @@ export const Navbar: React.FC<NavbarProps> = ({ hideBottomNav = false }) => {
 
             {/* 桌面端导航链接 */}
             <div className="hidden md:flex items-center space-x-2">
-              {navItems.map(({ path, label, icon: Icon, isSpecial, customIcon }) => (
+              {navItems.map(({ path, label, isSpecial, customIcon }) => (
                 <Button
                   key={path}
                   asChild
@@ -273,14 +269,12 @@ export const Navbar: React.FC<NavbarProps> = ({ hideBottomNav = false }) => {
                 >
                   <Link to={path} className="flex items-center space-x-2 font-button">
                     {customIcon ? (
-                      <img 
-                        src={isActive(path) ? customIcon.selected : customIcon.unselected} 
+                      <img
+                        src={isActive(path) ? customIcon.selected : customIcon.unselected}
                         alt={label}
                         className="w-4 h-4"
                       />
-                    ) : (
-                      <Icon className="w-4 h-4" />
-                    )}
+                    ) : null}
                     <span>{label}</span>
                   </Link>
                 </Button>
@@ -304,7 +298,7 @@ export const Navbar: React.FC<NavbarProps> = ({ hideBottomNav = false }) => {
       {!hideBottomNav && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border safe-area-pb">
           <div className="flex justify-around py-2 px-4">
-            {navItems.map(({ path, label, icon: Icon, isSpecial, customIcon }) => (
+            {navItems.map(({ path, label, isSpecial, customIcon }) => (
               <Button
                 key={path}
                 asChild
@@ -320,14 +314,12 @@ export const Navbar: React.FC<NavbarProps> = ({ hideBottomNav = false }) => {
               >
                 <Link to={path} className="flex flex-col items-center">
                   {customIcon ? (
-                    <img 
-                      src={isActive(path) ? customIcon.selected : customIcon.unselected} 
+                    <img
+                      src={isActive(path) ? customIcon.selected : customIcon.unselected}
                       alt={label}
                       className={isSpecial ? "w-24 h-24" : "w-6 h-6"}
                     />
-                  ) : (
-                    <Icon className={`w-8 h-8 ${isSpecial ? 'text-white' : ''}`} />
-                  )}
+                  ) : null}
                 </Link>
               </Button>
             ))}
