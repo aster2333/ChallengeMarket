@@ -22,6 +22,8 @@ import {
   SystemProgram,
   Transaction
 } from "@solana/web3.js";
+import { useStore } from "../src/store/useStore";
+import type { User } from "../src/store/useStore";
 
 type TraditionalWallet = {
   name: string;
@@ -143,10 +145,49 @@ export function useSolana() {
 
 export function SolanaProvider({ children }: { children: React.ReactNode }) {
   const allWallets = useWallets();
-  const [traditionalWallets, setTraditionalWallets] = useState<TraditionalWallet[]>([]);
+  const [traditionalWallets, setTraditionalWallets] =
+    useState<TraditionalWallet[]>([]);
   const connection = useMemo(
     () => new Connection(RPC_ENDPOINT, { commitment: "confirmed" }),
     []
+  );
+
+  const setUser = useStore((state) => state.setUser);
+  const setIsWalletConnected = useStore(
+    (state) => state.setIsWalletConnected
+  );
+
+  const applyUserState = useCallback(
+    (account: UiWalletAccount | null, nextBalance?: number | null) => {
+      if (account) {
+        const current = useStore.getState().user;
+        const balanceValue =
+          typeof nextBalance === "number"
+            ? nextBalance
+            : typeof current?.balance === "number"
+            ? current.balance
+            : 0;
+
+        const updatedUser: User = {
+          address: account.address,
+          publicKey: account.address,
+          totalEarnings: current?.totalEarnings ?? 0,
+          totalBets: current?.totalBets ?? 0,
+          challengesCreated: current?.challengesCreated ?? 0,
+          challengesAccepted: current?.challengesAccepted ?? 0,
+          winRate: current?.winRate ?? 0,
+          balance: balanceValue,
+          nfts: current?.nfts ?? []
+        };
+
+        setUser(updatedUser);
+        setIsWalletConnected(true);
+      } else {
+        setIsWalletConnected(false);
+        setUser(null);
+      }
+    },
+    [setIsWalletConnected, setUser]
   );
 
   // Detect traditional wallets on mount and when window loads
@@ -236,19 +277,28 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
     [selectedAccount, selectedWallet]
   );
 
-  const setWalletAndAccount = (
-    wallet: UiWallet | null,
-    account: UiWalletAccount | null
-  ) => {
-    setSelectedWallet(wallet);
-    setSelectedAccount(account);
-  };
+  const setWalletAndAccount = useCallback(
+    (wallet: UiWallet | null, account: UiWalletAccount | null) => {
+      setSelectedWallet(wallet);
+      setSelectedAccount(account);
 
-  const disconnect = () => {
+      if (wallet && account) {
+        setBalance(null);
+        applyUserState(account, null);
+      } else {
+        setBalance(null);
+        applyUserState(null);
+      }
+    },
+    [applyUserState]
+  );
+
+  const disconnect = useCallback(() => {
     setSelectedWallet(null);
     setSelectedAccount(null);
     setBalance(null);
-  };
+    applyUserState(null);
+  }, [applyUserState]);
 
   // Get public key from selected account
   const publicKey = selectedAccount?.address;
@@ -265,12 +315,13 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
       );
       const nextBalance = lamports / LAMPORTS_PER_SOL;
       setBalance(nextBalance);
+      applyUserState(selectedAccount, nextBalance);
       return nextBalance;
     } catch (error) {
       console.error("Failed to refresh balance", error);
       throw error;
     }
-  }, [connection, selectedAccount]);
+  }, [applyUserState, connection, selectedAccount]);
 
   useEffect(() => {
     if (isConnected) {
@@ -413,7 +464,9 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
       connection,
       refreshBalance,
       requestAirdrop,
-      sendSol
+      sendSol,
+      setWalletAndAccount,
+      disconnect
     ]
   );
 
