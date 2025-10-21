@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export interface ErrorHandlerOptions {
   showToast?: boolean;
@@ -8,9 +9,12 @@ export interface ErrorHandlerOptions {
 }
 
 export function useErrorHandler() {
+  const { t } = useTranslation('errors');
+  const defaultErrorMessage = t('general.operation_failed');
+
   const handleError = useCallback((
-    error: unknown, 
-    defaultMessage: string = '操作失败',
+    error: unknown,
+    defaultMessage?: string,
     options: ErrorHandlerOptions = {}
   ) => {
     const {
@@ -20,10 +24,11 @@ export function useErrorHandler() {
     } = options;
 
     // 提取错误信息
-    let errorMessage = defaultMessage;
-    
+    const fallbackMessage = defaultMessage ?? defaultErrorMessage;
+    let errorMessage = fallbackMessage;
+
     if (error instanceof Error) {
-      errorMessage = error.message || defaultMessage;
+      errorMessage = error.message || fallbackMessage;
     } else if (typeof error === 'string') {
       errorMessage = error;
     } else if (error && typeof error === 'object' && 'message' in error) {
@@ -41,7 +46,7 @@ export function useErrorHandler() {
       console.error('Error occurred:', {
         error,
         message: errorMessage,
-        defaultMessage,
+        defaultMessage: fallbackMessage,
         timestamp: new Date().toISOString()
       });
     }
@@ -55,7 +60,7 @@ export function useErrorHandler() {
       message: errorMessage,
       displayMessage
     };
-  }, []);
+  }, [defaultErrorMessage]);
 
   const handleSuccess = useCallback((message: string) => {
     toast.success(message);
@@ -96,7 +101,7 @@ export function useErrorHandler() {
         toast.dismiss(toastId);
       }
       
-      const errorMessage = messages.error || '操作失败';
+      const errorMessage = messages.error || defaultErrorMessage;
       toast.error(errorMessage);
       
       // 记录错误到控制台
@@ -107,7 +112,7 @@ export function useErrorHandler() {
       
       throw error;
     }
-  }, []);
+  }, [defaultErrorMessage]);
 
   return {
     handleError,

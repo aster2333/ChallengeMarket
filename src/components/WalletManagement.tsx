@@ -145,8 +145,8 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
             onClick={() => setActiveTab('wallets')}
             className={`px-2 sm:px-3 lg:px-4 py-2 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap touch-manipulation ${
               activeTab === 'wallets'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Wallet className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
@@ -156,8 +156,8 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
             onClick={() => setActiveTab('security')}
             className={`px-2 sm:px-3 lg:px-4 py-2 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap touch-manipulation ${
               activeTab === 'security'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Shield className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
@@ -167,8 +167,8 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
             onClick={() => setActiveTab('sessions')}
             className={`px-2 sm:px-3 lg:px-4 py-2 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap touch-manipulation ${
               activeTab === 'sessions'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Clock className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
@@ -190,7 +190,7 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="text-sm sm:text-base font-medium">{t('wallet.browser_wallet')}</h3>
-                        <p className="text-xs sm:text-sm text-gray-500 break-all">
+                        <p className="text-xs sm:text-sm text-muted-foreground break-all">
                           {publicKey ? formatAddress(publicKey.toString()) : t('wallet.not_connected')}
                         </p>
                       </div>
@@ -228,7 +228,7 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="font-medium">{t('wallet.mobile_wallet')}</h3>
-                        <p className="text-sm text-gray-500 break-all">
+                        <p className="text-sm text-muted-foreground break-all">
                           {formatAddress(wcAccounts[0])}
                         </p>
                       </div>
@@ -265,7 +265,7 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="font-medium">{wallet.name}</h3>
-                        <p className="text-sm text-gray-500 break-all">
+                        <p className="text-sm text-muted-foreground break-all">
                           {formatAddress(wallet.publicKey)}
                         </p>
                         {wallet.id === currentWallet?.id && (
@@ -296,7 +296,7 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
               ))}
 
               {!connected && !wcConnected && wallets.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <Wallet className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>{t('wallet.no_connected_wallets')}</p>
                 </div>
@@ -318,7 +318,7 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
                     )}
                     <div>
                       <h3 className="font-medium">{t('wallet.wallet_lock')}</h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         {isLocked ? t('wallet.wallet_locked') : t('wallet.wallet_unlocked')}
                       </p>
                     </div>
@@ -371,7 +371,7 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
                     {t('buttons.update')}
                   </Button>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   {t('wallet.current_setting')}: {sessionTimeout || 30} {t('wallet.minutes')}
                 </p>
               </div>
@@ -406,7 +406,7 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="min-w-0 flex-1">
                           <h4 className="font-medium break-all">{session.peer.metadata.name}</h4>
-                          <p className="text-sm text-gray-500 break-all">
+                          <p className="text-sm text-muted-foreground break-all">
                             {session.peer.metadata.url}
                           </p>
                         </div>
@@ -431,15 +431,15 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
                   <div className="p-3 sm:p-4 border rounded-lg">
                     <div className="space-y-2">
                       <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                        <span className="text-sm text-gray-500">{t('wallet.current_wallet')}:</span>
+                        <span className="text-sm text-muted-foreground">{t('wallet.current_wallet')}:</span>
                         <span className="text-sm font-medium break-all">{currentWallet.name}</span>
                       </div>
                       <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                        <span className="text-sm text-gray-500">{t('wallet.session_status')}:</span>
+                        <span className="text-sm text-muted-foreground">{t('wallet.session_status')}:</span>
                         <span className="text-sm text-green-600">{t('wallet.active')}</span>
                       </div>
                       <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                        <span className="text-sm text-gray-500">{t('wallet.auto_lock')}:</span>
+                        <span className="text-sm text-muted-foreground">{t('wallet.auto_lock')}:</span>
                         <span className="text-sm">{sessionTimeout || 30} {t('wallet.minutes')}</span>
                       </div>
                     </div>
@@ -448,7 +448,7 @@ export const WalletManagement: React.FC<WalletManagementProps> = ({ isOpen, onCl
               )}
 
               {sessions.length === 0 && (!currentWallet || isLocked) && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <Clock className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>{t('wallet.no_active_sessions')}</p>
                 </div>

@@ -17,7 +17,6 @@ export interface Challenge {
   id: string;
   title: string;
   description: string;
-  content: string;
   creator: string;
   createdAt: Date;
   endTime: Date;
@@ -36,6 +35,11 @@ export interface Challenge {
   votes?: Vote[];
   yesVotes?: number;
   delayVotes?: number;
+  treasuryAddress?: string;
+  totalBetAmount?: number;
+  yesAmount?: number;
+  noAmount?: number;
+  image?: string | null;
 }
 
 // 下注数据结构

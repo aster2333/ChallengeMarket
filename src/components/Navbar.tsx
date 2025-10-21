@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { EnhancedWalletButton } from './EnhancedWalletButton';
 import { Bell, Menu, Globe, Moon, Sun, BookOpen, Info, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
+import { cn } from '../lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -267,7 +268,17 @@ export const Navbar: React.FC<NavbarProps> = ({ hideBottomNav = false }) => {
                   size="sm"
                   className={isSpecial ? "bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 transform hover:scale-105" : ""}
                 >
-                  <Link to={path} className="flex items-center space-x-2 font-button">
+                  <Link
+                    to={path}
+                    className={cn(
+                      "flex items-center space-x-2 font-button transition-colors",
+                      isSpecial
+                        ? "text-primary-foreground"
+                        : isActive(path)
+                          ? "text-primary"
+                          : "text-foreground hover:text-primary"
+                    )}
+                  >
                     {customIcon ? (
                       <img
                         src={isActive(path) ? customIcon.selected : customIcon.unselected}
@@ -275,7 +286,18 @@ export const Navbar: React.FC<NavbarProps> = ({ hideBottomNav = false }) => {
                         className="w-4 h-4"
                       />
                     ) : null}
-                    <span>{label}</span>
+                    <span
+                      className={cn(
+                        "transition-colors",
+                        isSpecial
+                          ? "text-primary-foreground"
+                          : isActive(path)
+                            ? "text-primary"
+                            : "text-foreground"
+                      )}
+                    >
+                      {label}
+                    </span>
                   </Link>
                 </Button>
               ))}

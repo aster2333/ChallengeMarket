@@ -154,7 +154,7 @@ export function LocalWalletLogin({ onSuccess, onCancel }: LocalWalletLoginProps)
               <div className="space-y-2">
                 <Label htmlFor="wallet-name">{t('wallet.wallet_name')}</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="wallet-name"
                     type="text"
@@ -174,7 +174,7 @@ export function LocalWalletLogin({ onSuccess, onCancel }: LocalWalletLoginProps)
                 {isRegistering ? t('wallet.set_password') : t('wallet.wallet_password')}
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -187,7 +187,7 @@ export function LocalWalletLogin({ onSuccess, onCancel }: LocalWalletLoginProps)
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
                   disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -200,7 +200,7 @@ export function LocalWalletLogin({ onSuccess, onCancel }: LocalWalletLoginProps)
               <div className="space-y-2">
                 <Label htmlFor="confirm-password">{t('wallet.confirm_password')}</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="confirm-password"
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -213,7 +213,7 @@ export function LocalWalletLogin({ onSuccess, onCancel }: LocalWalletLoginProps)
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
                     disabled={isLoading}
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

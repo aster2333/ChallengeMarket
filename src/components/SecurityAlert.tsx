@@ -106,7 +106,7 @@ export const SecurityAlert: React.FC<SecurityAlertProps> = ({
 
       case 'unlock_required':
         return {
-          icon: <Lock className="w-6 h-6 text-blue-500" />,
+          icon: <Lock className="w-6 h-6 text-primary" />,
           title: t('common.wallet.wallet_locked'),
           description: t('common.wallet.unlock_required_desc'),
           actions: (
@@ -127,7 +127,7 @@ export const SecurityAlert: React.FC<SecurityAlertProps> = ({
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showPassword ? (
                       <EyeOff className="w-4 h-4" />
@@ -158,7 +158,7 @@ export const SecurityAlert: React.FC<SecurityAlertProps> = ({
 
       default:
         return {
-          icon: <Shield className="w-6 h-6 text-gray-500" />,
+          icon: <Shield className="w-6 h-6 text-muted-foreground" />,
           title: t('common.wallet.security_tip'),
           description: t('common.wallet.unknown_security_type'),
           actions: (

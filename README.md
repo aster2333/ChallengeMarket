@@ -1,57 +1,66 @@
-# React + TypeScript + Vite
+# Challenge Market
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Solana-native challenge market with a Vite + React frontend and FastAPI backend. Users can create challenges, back them with SOL on Devnet, and record verified bet transactions.
 
-Currently, two official plugins are available:
+## Project structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+.
+├── backend/               # FastAPI application and SQLite persistence
+├── src/                   # React application source code
+├── public/
+└── types/                 # Shared TypeScript DTOs
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Prerequisites
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Node.js 20+
+- Python 3.11+
+- Solana wallet (Phantom, Solflare, Backpack…) funded on Devnet
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Environment variables
+
+Create a `.env` file (or export environment variables) with:
+
+```bash
+# Frontend
+VITE_API_BASE_URL=http://localhost:8000
+VITE_TREASURY_ADDRESS=<SOLANA_PUBLIC_KEY_FOR_CHALLENGE_TREASURY>
 ```
+
+Optional backend overrides can be found in [`backend/README.md`](backend/README.md).
+
+## Running locally
+
+### Backend
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+The API will start on `http://127.0.0.1:8000`.
+
+### Frontend
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173` and connect a Solana wallet on Devnet. Challenge creation calls the backend API, and placing a bet sends a SOL transfer via the connected wallet. The backend verifies the signature before recording the bet.
+
+## Testing bets on Devnet
+
+1. Request Devnet SOL from the [Solana faucet](https://faucet.solana.com/).
+2. Create a challenge with a treasury address you control.
+3. Use the “Buy YES/NO” buttons to send SOL. The signature is verified against the configured RPC before it is saved.
+
+## Production considerations
+
+- Configure a persistent database (e.g., Postgres) instead of SQLite.
+- Securely manage escrow keypairs if the backend is responsible for challenge treasuries.
+- Add rate limiting and authentication to the API before mainnet deployment.

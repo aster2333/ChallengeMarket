@@ -202,5 +202,12 @@
       "buy_delay": "买 DELAY",
       "challenge_reward": "挑战赢奖"
     }
+  },
+  "actions": {
+    "bet_yes": "买 YES",
+    "bet_no": "买 NO"
+  },
+  "messages": {
+    "connect_to_bet": "连接钱包后即可下注"
   }
 }

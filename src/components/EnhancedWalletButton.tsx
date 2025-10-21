@@ -382,7 +382,7 @@ export function EnhancedWalletButton() {
                 </>
               ) : (
                 <div className="px-3 py-4 text-center">
-                  <Smartphone className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                  <Smartphone className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground">
                     {t('wallet.no_extension')}
                   </p>

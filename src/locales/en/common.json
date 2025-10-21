@@ -216,5 +216,12 @@
       "buy_delay": "BUY DELAY",
       "challenge_reward": "Challenge Reward"
     }
+  },
+  "actions": {
+    "bet_yes": "Buy YES",
+    "bet_no": "Buy NO"
+  },
+  "messages": {
+    "connect_to_bet": "Connect your wallet to place a bet."
   }
 }
