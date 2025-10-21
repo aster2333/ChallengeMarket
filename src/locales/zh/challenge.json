@@ -39,8 +39,10 @@
       "random_stop_hint": "启用后，挑战可能会在持续时间内随机结束",
       "allow_random_stop": "允许随机结束",
       "treasury_address": "奖池地址",
+      "treasury_placeholder": "输入奖池公钥",
       "cover": "挑战封面",
-      "cover_hint": "上传一张封面图片展示挑战"
+      "cover_hint": "上传一张封面图片展示挑战",
+      "cover_preview_alt": "已选择的封面预览"
     },
     "categories": {
       "fitness": "健身运动",
@@ -54,7 +56,9 @@
     "errors": {
       "treasury_required": "请填写奖池地址",
       "invalid_prize_pool": "请输入有效的奖池金额",
-      "invalid_duration": "请输入有效的挑战时长"
+      "invalid_duration": "请输入有效的挑战时长",
+      "prize_pool_min": "奖池金额至少需要 0.05 SOL",
+      "duration_min": "挑战时长至少为 1 小时"
     },
     "difficulty": {
       "easy": "简单",

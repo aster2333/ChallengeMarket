@@ -39,8 +39,10 @@
       "random_stop_hint": "When enabled, the challenge may end randomly within the duration",
       "allow_random_stop": "Allow random stop",
       "treasury_address": "Treasury address",
+      "treasury_placeholder": "Enter treasury public key",
       "cover": "Cover image",
-      "cover_hint": "Upload a banner to represent your challenge"
+      "cover_hint": "Upload a banner to represent your challenge",
+      "cover_preview_alt": "Selected cover preview"
     },
     "categories": {
       "fitness": "Fitness & Sports",
@@ -54,7 +56,9 @@
     "errors": {
       "treasury_required": "Treasury address is required",
       "invalid_prize_pool": "Please enter a valid prize pool",
-      "invalid_duration": "Please enter a valid duration"
+      "invalid_duration": "Please enter a valid duration",
+      "prize_pool_min": "Prize pool must be at least 0.05 SOL",
+      "duration_min": "Duration must be at least 1 hour"
     },
     "difficulty": {
       "easy": "Easy",

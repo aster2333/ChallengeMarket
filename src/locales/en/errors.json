@@ -34,6 +34,7 @@
     "submission_failed": "Submission failed"
   },
   "general": {
+    "operation_failed": "Operation failed",
     "unknown_error": "Unknown error",
     "try_again": "Please try again",
     "contact_support": "Please contact support",

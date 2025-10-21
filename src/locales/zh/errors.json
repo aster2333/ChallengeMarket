@@ -34,6 +34,7 @@
     "submission_failed": "提交失败"
   },
   "general": {
+    "operation_failed": "操作失败",
     "unknown_error": "未知错误",
     "try_again": "请重试",
     "contact_support": "请联系客服",

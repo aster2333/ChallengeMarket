@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ImagePlus, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -88,7 +88,7 @@ const CreateChallenge = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setForm((prev) => ({ ...prev, imageFile: file }));
@@ -102,7 +102,7 @@ const CreateChallenge = () => {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!isConnected || !publicKey) {
@@ -217,10 +217,12 @@ const CreateChallenge = () => {
             <Input
               id="prizePool"
               type="number"
-              min="0"
+              min="0.05"
               step="0.01"
               value={form.prizePool}
               onChange={(event) => setForm((prev) => ({ ...prev, prizePool: event.target.value }))}
+              onInvalid={(event) => event.currentTarget.setCustomValidity(t('create.errors.prize_pool_min'))}
+              onInput={(event) => event.currentTarget.setCustomValidity('')}
               className="font-body"
             />
           </div>
@@ -235,6 +237,8 @@ const CreateChallenge = () => {
               step="1"
               value={form.durationHours}
               onChange={(event) => setForm((prev) => ({ ...prev, durationHours: event.target.value }))}
+              onInvalid={(event) => event.currentTarget.setCustomValidity(t('create.errors.duration_min'))}
+              onInput={(event) => event.currentTarget.setCustomValidity('')}
               className="font-body"
             />
           </div>
@@ -245,7 +249,7 @@ const CreateChallenge = () => {
               value={form.treasuryAddress}
               onChange={(event) => setForm((prev) => ({ ...prev, treasuryAddress: event.target.value }))}
               className="font-mono"
-              placeholder="Treasury public key"
+              placeholder={t('create.form.treasury_placeholder')}
               required
             />
           </div>
@@ -265,7 +269,7 @@ const CreateChallenge = () => {
           <Label htmlFor="image">{t('create.form.cover')}</Label>
           <div className="border border-dashed border-border rounded-xl p-6 text-center">
             {preview ? (
-              <img src={preview} alt="preview" className="mx-auto max-h-48 rounded-lg object-cover" />
+              <img src={preview} alt={t('create.form.cover_preview_alt')} className="mx-auto max-h-48 rounded-lg object-cover" />
             ) : (
               <div className="text-muted-foreground flex flex-col items-center gap-2 font-body">
                 <ImagePlus className="w-8 h-8" />
