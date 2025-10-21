@@ -36,7 +36,7 @@ export const SecurityAlert: React.FC<SecurityAlertProps> = ({
   message 
 }) => {
   const { t } = useTranslation();
-  const { unlockWallet: unlock, isUnlocked: isLocked, settings, currentWallet } = useLocalWallet();
+  const { unlockWallet: unlock, settings, currentWallet } = useLocalWallet();
   const sessionTimeout = settings?.sessionTimeout || 30;
   const { handleSuccess, handleError } = useErrorHandler();
   

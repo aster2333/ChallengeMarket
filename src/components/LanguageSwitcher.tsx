@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Globe, ChevronRight } from 'lucide-react';
 
 const LanguageSwitcher: React.FC = () => {
-  const { i18n, t } = useTranslation('common');
+  const { i18n } = useTranslation('common');
   const [isExpanded, setIsExpanded] = useState(false);
 
   const languages = [

@@ -1,17 +1,15 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  Wallet, 
-  ChevronDown, 
-  LogOut, 
-  QrCode, 
-  Key, 
+import {
+  Wallet,
+  LogOut,
+  QrCode,
+  Key,
   Smartphone,
   Shield,
   Settings,
-  Lock,
-  Unlock
+  Lock
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useErrorHandler } from '../hooks/useErrorHandler';
@@ -26,7 +24,7 @@ import {
 } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { useConnect, useDisconnect, type UiWallet } from '@wallet-standard/react';
+import { useConnect, useDisconnect, type UiWallet, type UiWalletAccount } from '@wallet-standard/react';
 import { useSolana } from '../../components/solana-provider';
 import { useWalletConnect } from '../providers/WalletConnectProvider';
 import { useLocalWallet } from '../providers/LocalWalletProvider';
@@ -57,7 +55,7 @@ function WalletMenuItem({ wallet, onConnect }: { wallet: UiWallet; onConnect: ()
   
   // 安全地获取 connect 函数，避免在钱包不可用时崩溃
   let isConnecting = false;
-  let connect: (() => Promise<any>) | null = null;
+  let connect: (() => Promise<readonly UiWalletAccount[]>) | null = null;
   
   try {
     const [connecting, connectFn] = useConnect(wallet);
@@ -84,13 +82,13 @@ function WalletMenuItem({ wallet, onConnect }: { wallet: UiWallet; onConnect: ()
       // 检查常见的钱包对象
       const walletName = wallet.name.toLowerCase();
       if (walletName.includes('phantom')) {
-        return !!(window as any).phantom?.solana;
+        return Boolean(window.phantom?.solana);
       } else if (walletName.includes('solflare')) {
-        return !!(window as any).solflare;
+        return Boolean(window.solflare);
       } else if (walletName.includes('backpack')) {
-        return !!(window as any).backpack;
+        return Boolean(window.backpack);
       } else if (walletName.includes('coinbase')) {
-        return !!(window as any).coinbaseSolana;
+        return Boolean(window.coinbaseSolana);
       }
     }
     
@@ -121,7 +119,7 @@ function WalletMenuItem({ wallet, onConnect }: { wallet: UiWallet; onConnect: ()
     try {
       console.log(`Attempting to connect to ${wallet.name}...`);
       const accounts = await connect();
-      
+
       if (accounts && accounts.length > 0) {
         const account = accounts[0];
         console.log(`Successfully connected to ${wallet.name}:`, account);
@@ -132,29 +130,39 @@ function WalletMenuItem({ wallet, onConnect }: { wallet: UiWallet; onConnect: ()
         console.warn(`${wallet.name} connection returned no accounts`);
         handleError(t('wallet.no_accounts'));
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`Failed to connect ${wallet.name}:`, err);
-      
-      // 提供更友好的错误信息
+
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === 'string'
+          ? err
+          : null;
+
       let errorMessage = t('wallet.connection_failed');
-      if (err?.message) {
-        if (err.message.includes('No underlying Wallet Standard wallet') || 
-            err.message.includes('not found') || 
-            err.message.includes('unregistered')) {
+      if (message) {
+        if (
+          message.includes('No underlying Wallet Standard wallet') ||
+          message.includes('not found') ||
+          message.includes('unregistered')
+        ) {
           errorMessage = `${wallet.name} ${t('wallet.not_installed')}`;
-        } else if (err.message.includes('User rejected') || 
-                   err.message.includes('user rejected') ||
-                   err.message.includes('cancelled')) {
+        } else if (
+          message.includes('User rejected') ||
+          message.includes('user rejected') ||
+          message.includes('cancelled')
+        ) {
           errorMessage = t('wallet.user_rejected');
-        } else if (err.message.includes('timeout')) {
+        } else if (message.includes('timeout')) {
           errorMessage = t('wallet.connection_timeout');
-        } else if (err.message.includes('network') || err.message.includes('Network')) {
+        } else if (message.toLowerCase().includes('network')) {
           errorMessage = t('wallet.network_error');
         } else {
-          errorMessage = `${wallet.name}: ${err.message}`;
+          errorMessage = `${wallet.name}: ${message}`;
         }
       }
-      
+
       // 显示用户友好的错误提示
       handleError(errorMessage);
     }
@@ -205,7 +213,13 @@ function DisconnectButton({ wallet, onDisconnect }: { wallet: UiWallet; onDiscon
 }
 
 export function EnhancedWalletButton() {
-  const { wallets, selectedWallet, selectedAccount, isConnected } = useSolana();
+  const {
+    wallets,
+    selectedWallet,
+    selectedAccount,
+    isConnected,
+    disconnect: resetSolanaConnection
+  } = useSolana();
   const { isConnected: wcConnected, currentAccount: wcAccount, disconnectSession } = useWalletConnect();
   const { 
     currentWallet, 
@@ -257,24 +271,17 @@ export function EnhancedWalletButton() {
   const hasAnyConnection = connectionInfo !== null;
 
   // 处理断开连接
-  const handleDisconnectAll = async () => {
+  const handleNonExtensionDisconnect = async () => {
     try {
-      // 断开扩展钱包
-      if (isConnected && selectedWallet) {
-        const [, disconnect] = useDisconnect(selectedWallet);
-        await disconnect();
-      }
-      
-      // 断开 WalletConnect
       if (wcConnected) {
         await disconnectSession();
       }
-      
-      // 锁定本地钱包
+
       if (isUnlocked) {
         lockWallet();
       }
-      
+
+      resetSolanaConnection();
       setDropdownOpen(false);
     } catch (error) {
       console.error('Failed to disconnect:', error);
@@ -481,13 +488,23 @@ export function EnhancedWalletButton() {
               )}
 
               {/* 断开连接 */}
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive cursor-pointer touch-manipulation p-4 min-h-[60px]"
-                onClick={handleDisconnectAll}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                {t('wallet.disconnect')}
-              </DropdownMenuItem>
+              {connectionInfo.type === 'extension' && selectedWallet ? (
+                <DisconnectButton
+                  wallet={selectedWallet}
+                  onDisconnect={() => {
+                    resetSolanaConnection();
+                    setDropdownOpen(false);
+                  }}
+                />
+              ) : (
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive cursor-pointer touch-manipulation p-4 min-h-[60px]"
+                  onClick={handleNonExtensionDisconnect}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  {t('wallet.disconnect')}
+                </DropdownMenuItem>
+              )}
             </>
           )}
         </DropdownMenuContent>

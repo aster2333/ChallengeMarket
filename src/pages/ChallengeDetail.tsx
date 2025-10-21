@@ -1,23 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Clock, 
-  DollarSign, 
-  Users,
-  Camera,
-  CheckCircle,
-  XCircle,
-  Share,
-  MessageCircle,
-  TrendingUp,
-  Trophy,
-  Star
-} from 'lucide-react';
+import { ArrowLeft, Users, MessageCircle, TrendingUp, Trophy, Star } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { useErrorHandler } from '../hooks/useErrorHandler';
@@ -106,9 +93,11 @@ const ChallengeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useStore();
-  const { handleError, handleSuccess, handlePromise } = useErrorHandler();
+  const { handleError, handlePromise } = useErrorHandler();
   const { t } = useTranslation('challenge');
   const detail = (key: string) => t(`detail.${key}`);
+
+  const language = i18n.language || i18n.resolvedLanguage || 'zh';
   
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [loading, setLoading] = useState(true);
@@ -147,12 +136,7 @@ const ChallengeDetail: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // 根据当前语言生成模拟数据
-      const currentLanguage = i18n.language || i18n.resolvedLanguage || 'zh';
-      const isEnglish = currentLanguage.startsWith('en');
-      
-      // 调试信息
-      console.log('Current language:', currentLanguage, 'isEnglish:', isEnglish);
-      
+      const isEnglish = language.startsWith('en');
       const locale = isEnglish ? 'en-US' : 'zh-CN';
 
       const mockChallenge: Challenge = {
@@ -314,7 +298,7 @@ const ChallengeDetail: React.FC = () => {
     };
 
     loadChallenge();
-  }, [id, i18n.language]);
+  }, [id, language]);
 
   const handleJoinChallenge = async () => {
     if (!user) {
@@ -324,11 +308,11 @@ const ChallengeDetail: React.FC = () => {
 
     try {
       await handlePromise(
-        new Promise(async (resolve) => {
+        (async () => {
           console.log('Joining challenge:', id);
-          await new Promise(r => setTimeout(r, 1000));
-          resolve('success');
-        }),
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return 'success';
+        })(),
         {
           loading: detail('joining_challenge'),
           success: detail('join_success'),
@@ -348,11 +332,11 @@ const ChallengeDetail: React.FC = () => {
 
     try {
       await handlePromise(
-        new Promise(async (resolve) => {
+        (async () => {
           console.log('Bankrolling challenge:', id);
-          await new Promise(r => setTimeout(r, 1000));
-          resolve('success');
-        }),
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return 'success';
+        })(),
         {
           loading: detail('bankrolling'),
           success: detail('bankroll_success'),

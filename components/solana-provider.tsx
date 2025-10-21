@@ -53,7 +53,7 @@ const detectTraditionalWallets = () => {
   const traditionalWallets: TraditionalWallet[] = [];
   
   // Check for Phantom
-  if (typeof window !== 'undefined' && (window as any).phantom?.solana) {
+  if (typeof window !== 'undefined' && window.phantom?.solana) {
     console.log("🔍 Phantom wallet detected via window.phantom");
     traditionalWallets.push({
       name: "Phantom",
@@ -62,12 +62,12 @@ const detectTraditionalWallets = () => {
       features: [StandardConnect, "solana:signAndSendTransaction"],
       accounts: [],
       isTraditional: true,
-      adapter: (window as any).phantom.solana
+      adapter: window.phantom.solana
     });
   }
-  
+
   // Check for Solflare
-  if (typeof window !== 'undefined' && (window as any).solflare?.isSolflare) {
+  if (typeof window !== 'undefined' && window.solflare?.isSolflare) {
     console.log("🔍 Solflare wallet detected via window.solflare");
     traditionalWallets.push({
       name: "Solflare",
@@ -76,12 +76,12 @@ const detectTraditionalWallets = () => {
       features: [StandardConnect, "solana:signAndSendTransaction"],
       accounts: [],
       isTraditional: true,
-      adapter: (window as any).solflare
+      adapter: window.solflare
     });
   }
-  
+
   // Check for Backpack
-  if (typeof window !== 'undefined' && (window as any).backpack?.isSolana) {
+  if (typeof window !== 'undefined' && window.backpack?.isSolana) {
     console.log("🔍 Backpack wallet detected via window.backpack");
     traditionalWallets.push({
       name: "Backpack",
@@ -90,7 +90,7 @@ const detectTraditionalWallets = () => {
       features: [StandardConnect, "solana:signAndSendTransaction"],
       accounts: [],
       isTraditional: true,
-      adapter: (window as any).backpack
+      adapter: window.backpack
     });
   }
   

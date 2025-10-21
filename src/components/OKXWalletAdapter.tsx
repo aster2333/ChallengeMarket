@@ -1,16 +1,13 @@
 import {
   BaseMessageSignerWalletAdapter,
-  WalletAdapterNetwork,
   WalletConnectionError,
-  WalletDisconnectedError,
   WalletDisconnectionError,
-  WalletError,
   WalletNotConnectedError,
   WalletNotReadyError,
-  WalletPublicKeyError,
   WalletReadyState,
   WalletSignMessageError,
   WalletSignTransactionError,
+  type WalletName,
 } from '@solana/wallet-adapter-base'
 import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 
@@ -33,12 +30,10 @@ interface OKXWindow extends Window {
 
 declare const window: OKXWindow
 
-export interface OKXWalletAdapterConfig {}
-
-export const OKXWalletName = 'OKX Wallet' as const
+export const OKXWalletName: WalletName<'OKX Wallet'> = 'OKX Wallet' as WalletName<'OKX Wallet'>
 
 export class OKXWalletAdapter extends BaseMessageSignerWalletAdapter {
-  name = OKXWalletName as any
+  readonly name = OKXWalletName
   url = 'https://www.okx.com/web3'
   icon = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iMTYiIGZpbGw9IiMwMDAwMDAiLz4KPHBhdGggZD0iTTEwIDEwSDIyVjIySDE0VjE0SDEwVjEwWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+'
   readonly supportedTransactionVersions = new Set<'legacy' | 0>(['legacy', 0])
@@ -51,7 +46,7 @@ export class OKXWalletAdapter extends BaseMessageSignerWalletAdapter {
       ? WalletReadyState.Unsupported
       : WalletReadyState.Installed
 
-  constructor(config: OKXWalletAdapterConfig = {}) {
+  constructor() {
     super()
     this._connecting = false
     this._wallet = null
@@ -92,12 +87,14 @@ export class OKXWalletAdapter extends BaseMessageSignerWalletAdapter {
         const response = await wallet.connect()
         this._wallet = wallet
         this._publicKey = response.publicKey
-      } catch (error: any) {
-        throw new WalletConnectionError(error?.message, error)
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to connect'
+        throw new WalletConnectionError(message, error instanceof Error ? error : undefined)
       }
-    } catch (error: any) {
-      this.emit('error', error)
-      throw error
+    } catch (error: unknown) {
+      const emittedError = error instanceof Error ? error : new Error(String(error))
+      this.emit('error', emittedError)
+      throw emittedError
     } finally {
       this._connecting = false
     }
@@ -111,8 +108,9 @@ export class OKXWalletAdapter extends BaseMessageSignerWalletAdapter {
 
       try {
         await wallet.disconnect()
-      } catch (error: any) {
-        this.emit('error', new WalletDisconnectionError(error?.message, error))
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to disconnect'
+        this.emit('error', new WalletDisconnectionError(message, error instanceof Error ? error : undefined))
       }
     }
 
@@ -126,12 +124,14 @@ export class OKXWalletAdapter extends BaseMessageSignerWalletAdapter {
 
       try {
         return (await wallet.signTransaction(transaction)) as T
-      } catch (error: any) {
-        throw new WalletSignTransactionError(error?.message, error)
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to sign transaction'
+        throw new WalletSignTransactionError(message, error instanceof Error ? error : undefined)
       }
-    } catch (error: any) {
-      this.emit('error', error)
-      throw error
+    } catch (error: unknown) {
+      const emittedError = error instanceof Error ? error : new Error(String(error))
+      this.emit('error', emittedError)
+      throw emittedError
     }
   }
 
@@ -142,12 +142,14 @@ export class OKXWalletAdapter extends BaseMessageSignerWalletAdapter {
 
       try {
         return (await wallet.signAllTransactions(transactions)) as T[]
-      } catch (error: any) {
-        throw new WalletSignTransactionError(error?.message, error)
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to sign transactions'
+        throw new WalletSignTransactionError(message, error instanceof Error ? error : undefined)
       }
-    } catch (error: any) {
-      this.emit('error', error)
-      throw error
+    } catch (error: unknown) {
+      const emittedError = error instanceof Error ? error : new Error(String(error))
+      this.emit('error', emittedError)
+      throw emittedError
     }
   }
 
@@ -159,12 +161,14 @@ export class OKXWalletAdapter extends BaseMessageSignerWalletAdapter {
       try {
         const { signature } = await wallet.signMessage(message)
         return signature
-      } catch (error: any) {
-        throw new WalletSignMessageError(error?.message, error)
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to sign message'
+        throw new WalletSignMessageError(message, error instanceof Error ? error : undefined)
       }
-    } catch (error: any) {
-      this.emit('error', error)
-      throw error
+    } catch (error: unknown) {
+      const emittedError = error instanceof Error ? error : new Error(String(error))
+      this.emit('error', emittedError)
+      throw emittedError
     }
   }
 }

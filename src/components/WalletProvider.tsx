@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useMemo } from 'react'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
-import { WalletAdapterNetwork, WalletReadyState } from '@solana/wallet-adapter-base'
+import { WalletAdapterNetwork, WalletReadyState, type Adapter } from '@solana/wallet-adapter-base'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 import {
   PhantomWalletAdapter,
@@ -41,7 +41,7 @@ export const WalletContextProvider: FC<Props> = ({ children }) => {
       console.log('Initializing wallets')
       
       // 安全地初始化钱包适配器的辅助函数
-      const safeInitializeWallet = (walletFactory: () => any, name: string) => {
+      const safeInitializeWallet = (walletFactory: () => Adapter, name: string) => {
         try {
           const wallet = walletFactory();
           
@@ -63,7 +63,7 @@ export const WalletContextProvider: FC<Props> = ({ children }) => {
       };
 
       try {
-        const walletList: any[] = [];
+        const walletList: Adapter[] = [];
 
         // 基础钱包适配器（通常更稳定）
         const basicWallets = [

@@ -189,7 +189,7 @@ export function validatePassword(password: string): { isValid: boolean; message:
     return { isValid: false, message: '密码必须包含数字' };
   }
   
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
     return { isValid: false, message: '密码必须包含特殊字符' };
   }
   
