@@ -54,10 +54,15 @@
       "description_required": "Please enter challenge description",
       "reward_required": "Please enter reward amount",
       "deadline_required": "Please select deadline",
-      "category_required": "Please select challenge category"
+      "category_required": "Please select challenge category",
+      "wallet_required": "Please connect wallet first",
+      "image_required": "Please select challenge image"
     },
-    "success": "Challenge created successfully!",
-    "error": "Failed to create challenge, please try again"
+    "messages": {
+      "creating": "Creating challenge...",
+      "success": "Challenge created successfully!",
+      "error": "Failed to create challenge, please try again"
+    }
   },
   "detail": {
     "title": "Challenge Details",
@@ -186,5 +191,32 @@
     },
     "no_challenges": "No challenges available",
     "load_more": "Load More"
+  },
+  "submit_evidence": {
+    "title": "Submit Challenge Evidence",
+    "cost_notice": "Participation Fee",
+    "cost_description": "Participating in this challenge requires {{cost}} SOL",
+    "description_title": "Text Description",
+    "optional": "Optional",
+    "description_placeholder": "Describe how you completed this challenge, or add any relevant notes...",
+    "description_hint": "Detailed descriptions help reviewers better understand your completion",
+    "file_upload_title": "Upload Evidence File",
+    "required": "Required",
+    "upload_area_title": "Drag files here or click to upload",
+    "upload_area_description": "Supports image and video formats, max 5MB",
+    "select_file": "Select File",
+    "remove_file": "Remove File",
+    "file_requirements": "File Requirements:",
+    "file_types": "Supported formats: JPG, PNG, GIF, MP4, AVI, MOV",
+    "file_size_limit": "File size: Maximum 5MB",
+    "file_quality_hint": "Recommend uploading high-quality images or videos as evidence",
+    "submit_button": "Pay {{cost}} SOL and Submit Evidence",
+    "submitting": "Submitting...",
+    "success": "Evidence submitted successfully!",
+    "error": "Submission failed, please try again",
+    "connect_wallet_first": "Please connect wallet first",
+    "file_required": "Please select a file to upload",
+    "file_too_large": "File size exceeds 5MB limit",
+    "invalid_file_type": "Unsupported file format"
   }
 }

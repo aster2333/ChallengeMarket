@@ -128,6 +128,16 @@
     "total_rewards": "Total Rewards",
     "active_challenges": "Active Challenges",
     "completion_rate": "Completion Rate",
-    "average_rating": "Average Rating"
+    "average_rating": "Average Rating",
+    "time_remaining_days_hours": "{{days}}d {{hours}}h",
+    "time_remaining_hours": "{{hours}}h"
+  },
+  "nfts": {
+    "rarity": {
+      "common": "Common",
+      "rare": "Rare",
+      "epic": "Epic",
+      "legendary": "Legendary"
+    }
   }
 }

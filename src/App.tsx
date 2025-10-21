@@ -9,6 +9,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import Home from './pages/Home'
 import CreateChallenge from './pages/CreateChallenge'
 import ChallengeDetail from './pages/ChallengeDetail'
+import SubmitEvidence from './pages/SubmitEvidence'
 import Profile from './pages/Profile'
 import Settlement from './pages/Settlement'
 import Notifications from './pages/Notifications'
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/" element={<><Navbar /><Home /></>} />
                     <Route path="/create" element={<><Navbar hideBottomNav={true} /><CreateChallenge /></>} />
                     <Route path="/challenge/:id" element={<><Navbar hideBottomNav /><ChallengeDetail /></>} />
+                    <Route path="/challenge/:id/submit-evidence" element={<><Navbar hideBottomNav={true} /><SubmitEvidence /></>} />
                     <Route path="/profile" element={<><Navbar /><Profile /></>} />
                     <Route path="/notifications" element={<><Navbar /><Notifications /></>} />
                     <Route path="/settlement/:id" element={<><Navbar /><Settlement /></>} />

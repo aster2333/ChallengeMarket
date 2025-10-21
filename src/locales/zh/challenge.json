@@ -54,10 +54,15 @@
       "description_required": "请输入挑战描述",
       "reward_required": "请输入奖励金额",
       "deadline_required": "请选择截止时间",
-      "category_required": "请选择挑战类别"
+      "category_required": "请选择挑战类别",
+      "wallet_required": "请先连接钱包",
+      "image_required": "请选择挑战图片"
     },
-    "success": "挑战创建成功！",
-    "error": "创建挑战失败，请重试"
+    "messages": {
+      "creating": "正在创建挑战...",
+      "success": "挑战创建成功！",
+      "error": "创建挑战失败，请重试"
+    }
   },
   "detail": {
     "title": "挑战详情",
@@ -174,5 +179,32 @@
     },
     "no_challenges": "暂无挑战",
     "load_more": "加载更多"
+  },
+  "submit_evidence": {
+    "title": "提交挑战凭证",
+    "cost_notice": "参与费用",
+    "cost_description": "参与此挑战需要支付 {{cost}} SOL",
+    "description_title": "文字描述",
+    "optional": "选填",
+    "description_placeholder": "描述你如何完成这个挑战，或者添加任何相关说明...",
+    "description_hint": "详细的描述有助于评审更好地理解你的完成情况",
+    "file_upload_title": "上传凭证文件",
+    "required": "必填",
+    "upload_area_title": "拖拽文件到此处或点击上传",
+    "upload_area_description": "支持图片和视频格式，最大 5MB",
+    "select_file": "选择文件",
+    "remove_file": "移除文件",
+    "file_requirements": "文件要求：",
+    "file_types": "支持格式：JPG、PNG、GIF、MP4、AVI、MOV",
+    "file_size_limit": "文件大小：最大 5MB",
+    "file_quality_hint": "建议上传高质量的图片或视频作为凭证",
+    "submit_button": "支付 {{cost}} SOL 并提交凭证",
+    "submitting": "提交中...",
+    "success": "凭证提交成功！",
+    "error": "提交失败，请重试",
+    "connect_wallet_first": "请先连接钱包",
+    "file_required": "请选择要上传的文件",
+    "file_too_large": "文件大小超过 5MB 限制",
+    "invalid_file_type": "不支持的文件格式"
   }
 }

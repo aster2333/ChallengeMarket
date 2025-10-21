@@ -1,57 +1,206 @@
-# React + TypeScript + Vite
+# 挑战市场 - Solana 区块链前端应用
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+这是一个基于 Solana 区块链的前端挑战市场应用，用户可以创建挑战、参与投注并获得奖励。
 
-Currently, two official plugins are available:
+## 🚀 技术栈
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **前端框架**: React 18 + TypeScript
+- **构建工具**: Vite
+- **样式**: Tailwind CSS + shadcn/ui
+- **区块链**: Solana (Devnet)
+- **钱包集成**: Phantom, Solflare, OKX, Backpack 等
+- **国际化**: react-i18next (中文/英文)
+- **状态管理**: Zustand
+- **路由**: React Router DOM
+- **UI 组件**: Radix UI + Lucide React
 
-## Expanding the ESLint configuration
+## ✨ 功能特性
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 核心功能
+- 🎯 **挑战管理**: 创建、浏览、参与挑战
+- 💰 **投注系统**: 支持/反对投注，实时赔率计算
+- 👛 **多钱包支持**: 集成主流 Solana 钱包
+- 🌍 **国际化**: 中英文双语支持
+- 🌙 **主题切换**: 明暗主题自由切换
+- 📱 **响应式设计**: 完美适配移动端
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 钱包功能
+- 多钱包连接 (Phantom, Solflare, OKX, Backpack 等)
+- 本地钱包创建和导入
+- 私钥导入功能
+- 安全提示和验证
+- 钱包余额查看
+
+### 用户体验
+- 用户中心页面
+- 通知系统
+- 图片查看功能
+- 分享和收藏功能
+- 错误边界和异常处理
+
+## 🛠️ 开发环境
+
+### 前置要求
+- Node.js 18+
+- npm 或 yarn
+- Git
+
+### 安装和启动
+
+```bash
+# 克隆项目
+git clone <repository-url>
+cd ChallengeMarket
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+
+# 访问应用
+# http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 可用脚本
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# 开发环境
+npm run dev
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+# 构建生产版本
+npm run build
+
+# 预览构建结果
+npm run preview
+
+# 类型检查
+npm run check
+
+# 代码检查
+npm run lint
 ```
+
+## 🚀 部署
+
+### Vercel 部署
+
+1. **自动部署**
+   - 连接 GitHub 仓库到 Vercel
+   - 自动检测 Vite 项目配置
+   - 推送代码即可自动部署
+
+2. **手动部署**
+   ```bash
+   # 安装 Vercel CLI
+   npm i -g vercel
+   
+   # 登录并部署
+   vercel login
+   vercel --prod
+   ```
+
+### 环境变量
+
+```bash
+# .env
+VITE_SOLANA_NETWORK=devnet
+VITE_SOLANA_RPC_URL=https://api.devnet.solana.com
+```
+
+## 📁 项目结构
+
+```
+src/
+├── components/          # 可复用组件
+│   ├── ui/             # UI 基础组件 (shadcn/ui)
+│   ├── ChallengeCard.tsx
+│   ├── Navbar.tsx
+│   └── ...
+├── pages/              # 页面组件
+│   ├── Home.tsx
+│   ├── ChallengeDetail.tsx
+│   ├── CreateChallenge.tsx
+│   ├── Profile.tsx
+│   └── ...
+├── hooks/              # 自定义 Hooks
+├── providers/          # Context Providers
+├── store/              # Zustand 状态管理
+├── lib/                # 工具库和配置
+├── locales/            # 国际化文件
+│   ├── en/
+│   └── zh/
+└── assets/             # 静态资源
+```
+
+## 🔧 开发指南
+
+### 添加新组件
+
+使用 shadcn/ui 添加组件：
+```bash
+npx shadcn-ui@latest add button
+npx shadcn-ui@latest add dialog
+```
+
+### 国际化
+
+1. 在 `src/locales/zh/` 和 `src/locales/en/` 中添加翻译
+2. 在组件中使用：
+   ```tsx
+   import { useTranslation } from 'react-i18next';
+   
+   const { t } = useTranslation();
+   return <div>{t('key')}</div>;
+   ```
+
+### 状态管理
+
+使用 Zustand 进行状态管理：
+```tsx
+import { useStore } from '../store/useStore';
+
+const { challenges, addChallenge } = useStore();
+```
+
+## 🐛 故障排除
+
+### 常见问题
+
+1. **钱包连接失败**
+   - 确保钱包扩展已安装
+   - 检查网络设置 (Devnet)
+   - 查看浏览器控制台错误
+
+2. **构建失败**
+   - 检查 Node.js 版本 (需要 18+)
+   - 清除缓存：`rm -rf node_modules package-lock.json && npm install`
+   - 检查 TypeScript 类型错误
+
+3. **样式问题**
+   - 确保 Tailwind CSS 配置正确
+   - 检查暗黑模式类名
+   - 验证 shadcn/ui 组件导入
+
+## 🤝 贡献指南
+
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+## 🙏 致谢
+
+- [Solana](https://solana.com/) - 高性能区块链平台
+- [shadcn/ui](https://ui.shadcn.com/) - 优秀的 UI 组件库
+- [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架
+- [Vite](https://vitejs.dev/) - 快速的构建工具
+
+---
+
+**注意**: 这是一个演示项目，所有数据都存储在本地状态中。在生产环境中使用前，请进行充分的测试和安全审计。

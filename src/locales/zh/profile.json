@@ -122,6 +122,16 @@
     "total_bets_count": "总下注次数",
     "win_rate": "胜率",
     "total_earnings": "总收益",
-    "global_rank": "全站排名"
+    "global_rank": "全站排名",
+    "time_remaining_days_hours": "{{days}}天{{hours}}小时",
+    "time_remaining_hours": "{{hours}}小时"
+  },
+  "nfts": {
+    "rarity": {
+      "common": "普通",
+      "rare": "稀有",
+      "epic": "史诗",
+      "legendary": "传说"
+    }
   }
 }

@@ -336,22 +336,8 @@ const ChallengeDetail: React.FC = () => {
       return;
     }
 
-    try {
-      await handlePromise(
-        (async () => {
-          console.log('Joining challenge:', id);
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return 'success';
-        })(),
-        {
-          loading: detail('joining_challenge'),
-          success: detail('join_success'),
-          error: detail('join_failed')
-        }
-      );
-    } catch (error) {
-      handleError(error, detail('join_failed'));
-    }
+    // 跳转到上传凭证页面
+    navigate(`/challenge/${id}/submit-evidence`);
   };
 
   const handleBankroll = async () => {

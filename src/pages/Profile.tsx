@@ -382,13 +382,13 @@ const Profile: React.FC = () => {
     const now = new Date();
     const diff = endTime.getTime() - now.getTime();
     
-    if (diff <= 0) return '已结束';
+    if (diff <= 0) return t('challenges.ended');
     
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     
-    if (days > 0) return `${days}天${hours}小时`;
-    return `${hours}小时`;
+    if (days > 0) return t('challenges.time_remaining_days_hours', { days, hours });
+    return t('challenges.time_remaining_hours', { hours });
   };
 
   const getRarityColor = (rarity: string) => {
@@ -403,11 +403,11 @@ const Profile: React.FC = () => {
 
   const getRarityName = (rarity: string) => {
     switch (rarity) {
-      case 'common': return '普通';
-      case 'rare': return '稀有';
-      case 'epic': return '史诗';
-      case 'legendary': return '传说';
-      default: return '普通';
+      case 'common': return t('nfts.rarity.common');
+      case 'rare': return t('nfts.rarity.rare');
+      case 'epic': return t('nfts.rarity.epic');
+      case 'legendary': return t('nfts.rarity.legendary');
+      default: return t('nfts.rarity.common');
     }
   };
 
@@ -441,10 +441,19 @@ const Profile: React.FC = () => {
     <div className="min-h-screen bg-background pt-16 pb-20 md:pb-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 用户信息头部 */}
-        <div className="bg-card rounded-xl p-4 shadow-sm mb-6">
-          <div className="flex items-center justify-between">
+        <div className="relative bg-card/80 backdrop-blur-sm rounded-xl shadow-sm p-4 mb-6 border-2 border-transparent bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 overflow-hidden">
+          {/* 右上角渐变装饰 */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-400/30 via-pink-400/20 to-transparent rounded-bl-full"></div>
+          
+          {/* 渐变边框效果 */}
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 p-[2px]">
+            <div className="w-full h-full bg-card/90 backdrop-blur-sm rounded-xl"></div>
+          </div>
+          
+          {/* 内容区域 */}
+          <div className="relative z-10 flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">
                 {getCurrentAddress().slice(0, 2).toUpperCase()}
               </div>
               <div>
@@ -462,7 +471,7 @@ const Profile: React.FC = () => {
                   </div>
                   <Button
                     size="sm"
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-button"
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-button shadow-lg"
                     onClick={() => setRechargeDialogOpen(true)}
                     disabled={!isConnected}
                   >
@@ -586,17 +595,55 @@ const Profile: React.FC = () => {
         {/* 统计卡片 */}
         {userStats && (
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-              <div className="text-2xl font-mono-bold text-foreground">{userStats.totalChallengesCreated}</div>
-              <div className="text-sm text-muted-foreground font-body">{t('overview.created_challenges')}</div>
+            {/* 创建挑战数卡片 */}
+            <div className="relative bg-card/80 backdrop-blur-sm rounded-xl shadow-sm p-4 text-center border-2 border-transparent bg-gradient-to-r from-purple-500/20 via-indigo-500/20 to-blue-500/20 overflow-hidden">
+              {/* 右上角渐变装饰 */}
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-purple-400/40 via-indigo-400/30 to-transparent rounded-bl-full"></div>
+              
+              {/* 渐变边框效果 */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 p-[2px]">
+                <div className="w-full h-full bg-card/90 backdrop-blur-sm rounded-xl"></div>
+              </div>
+              
+              {/* 内容区域 */}
+              <div className="relative z-10">
+                <div className="text-2xl font-mono-bold text-foreground">{userStats.totalChallengesCreated}</div>
+                <div className="text-sm text-muted-foreground font-body">{t('overview.created_challenges')}</div>
+              </div>
             </div>
-            <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-              <div className="text-2xl font-mono-bold text-foreground">{userStats.totalChallengesParticipated}</div>
-              <div className="text-sm text-muted-foreground font-body">{t('overview.participated_challenges')}</div>
+            
+            {/* 参与挑战数卡片 */}
+            <div className="relative bg-card/80 backdrop-blur-sm rounded-xl shadow-sm p-4 text-center border-2 border-transparent bg-gradient-to-r from-pink-500/20 via-rose-500/20 to-orange-500/20 overflow-hidden">
+              {/* 右上角渐变装饰 */}
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-pink-400/40 via-rose-400/30 to-transparent rounded-bl-full"></div>
+              
+              {/* 渐变边框效果 */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 p-[2px]">
+                <div className="w-full h-full bg-card/90 backdrop-blur-sm rounded-xl"></div>
+              </div>
+              
+              {/* 内容区域 */}
+              <div className="relative z-10">
+                <div className="text-2xl font-mono-bold text-foreground">{userStats.totalChallengesParticipated}</div>
+                <div className="text-sm text-muted-foreground font-body">{t('overview.participated_challenges')}</div>
+              </div>
             </div>
-            <div className="bg-card rounded-xl p-4 shadow-sm text-center">
-              <div className="text-2xl font-mono-bold text-foreground">{userStats.totalEarnings.toFixed(1)}</div>
-              <div className="text-sm text-muted-foreground font-body">{t('overview.total_earnings_sol')}</div>
+            
+            {/* 总收益卡片 */}
+            <div className="relative bg-card/80 backdrop-blur-sm rounded-xl shadow-sm p-4 text-center border-2 border-transparent bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20 overflow-hidden">
+              {/* 右上角渐变装饰 */}
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-emerald-400/40 via-teal-400/30 to-transparent rounded-bl-full"></div>
+              
+              {/* 渐变边框效果 */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-[2px]">
+                <div className="w-full h-full bg-card/90 backdrop-blur-sm rounded-xl"></div>
+              </div>
+              
+              {/* 内容区域 */}
+              <div className="relative z-10">
+                <div className="text-2xl font-mono-bold text-foreground">{userStats.totalEarnings.toFixed(1)}</div>
+                <div className="text-sm text-muted-foreground font-body">{t('overview.total_earnings_sol')}</div>
+              </div>
             </div>
           </div>
         )}

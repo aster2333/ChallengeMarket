@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, X, Image, Grid3X3, ArrowLeft } from 'lucide-react';
+import { Upload, X, Image, Grid3X3, ArrowLeft, HelpCircle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { Tooltip } from '../components/ui/tooltip';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useTranslation } from 'react-i18next';
 
@@ -120,12 +121,12 @@ const CreateChallenge: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      handleError(new Error('请先连接钱包'));
+      handleError(new Error(t('create.form.validation.wallet_required')));
       return;
     }
 
     if (!form.image) {
-      handleError(new Error('请选择挑战图片'));
+      handleError(new Error(t('create.form.validation.image_required')));
       return;
     }
 
@@ -139,15 +140,15 @@ const CreateChallenge: React.FC = () => {
           return 'success';
         })(),
         {
-          loading: '正在创建挑战...',
-          success: '挑战创建成功！',
-          error: '创建挑战失败，请重试'
+          loading: t('create.form.messages.creating'),
+          success: t('create.form.messages.success'),
+          error: t('create.form.messages.error')
         }
       );
       
       navigate('/');
     } catch (error) {
-      handleError(error, '创建挑战失败，请重试');
+      handleError(error, t('create.form.messages.error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -355,9 +356,19 @@ const CreateChallenge: React.FC = () => {
 
             <div>
               <div className="flex items-center space-x-4">
-                <label className="text-sm font-heading text-foreground whitespace-nowrap">
-                  {t('create.form.random_stop')}
-                </label>
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-heading text-foreground whitespace-nowrap">
+                    {t('create.form.random_stop')}
+                  </label>
+                  <Tooltip content={t('create.form.random_stop_hint')}>
+                    <button
+                      type="button"
+                      className="w-4 h-4 rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/30 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1"
+                    >
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </button>
+                  </Tooltip>
+                </div>
                 <div className="flex items-center space-x-3">
                   <button
                     type="button"
@@ -379,9 +390,6 @@ const CreateChallenge: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-1 font-body ml-[120px]">
-                {t('create.form.random_stop_hint')}
-              </p>
             </div>
           </div>
 
