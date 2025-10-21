@@ -7,6 +7,14 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '../components/ui/dialog';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useTranslation } from 'react-i18next';
 import i18n from '../lib/i18n';
@@ -107,6 +115,10 @@ const ChallengeDetail: React.FC = () => {
   const [holders, setHolders] = useState<Holder[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [isBetDialogOpen, setIsBetDialogOpen] = useState(false);
+  const [selectedSide, setSelectedSide] = useState<'yes' | 'no' | null>(null);
+  const [betAmount, setBetAmount] = useState('');
+  const quickAmounts = [0.05, 0.1, 0.5, 1];
 
   // 生成模拟价格数据（单调上涨对数曲线）
   const generatePriceData = (locale: string): PriceData[] => {
@@ -363,6 +375,74 @@ const ChallengeDetail: React.FC = () => {
     setNewComment('');
   };
 
+  const handleOpenBetDialog = (side: 'yes' | 'no') => {
+    setSelectedSide(side);
+    setBetAmount('');
+    setIsBetDialogOpen(true);
+  };
+
+  const handleBetDialogChange = (open: boolean) => {
+    setIsBetDialogOpen(open);
+    if (!open) {
+      setSelectedSide(null);
+      setBetAmount('');
+    }
+  };
+
+  const handleConfirmBet = async () => {
+    if (!selectedSide) {
+      return;
+    }
+
+    if (!user) {
+      handleError(new Error(detail('connect_wallet_first')));
+      return;
+    }
+
+    const amount = Number(betAmount);
+
+    if (!betAmount || Number.isNaN(amount) || amount <= 0) {
+      handleError(new Error(detail('enter_bet_amount')));
+      return;
+    }
+
+    try {
+      await handlePromise(
+        (async () => {
+          console.log('Placing bet:', { id, side: selectedSide, amount });
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { amount, side: selectedSide };
+        })(),
+        {
+          loading: detail('betting'),
+          success: detail('bet_success'),
+          error: detail('bet_failed')
+        }
+      );
+
+      const userLabel = user.address
+        ? `${user.address.slice(0, 8)}...`
+        : 'Anonymous';
+
+      setActivities(prev => [
+        {
+          id: Date.now().toString(),
+          type: 'bet',
+          user: userLabel,
+          description: `${detail(selectedSide === 'yes' ? 'support' : 'against')} ${amount} SOL`,
+          timestamp: new Date()
+        },
+        ...prev
+      ]);
+
+      setIsBetDialogOpen(false);
+      setSelectedSide(null);
+      setBetAmount('');
+    } catch (error) {
+      handleError(error, detail('bet_failed'));
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background pt-16 pb-20 md:pb-8">
@@ -394,7 +474,7 @@ const ChallengeDetail: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-20 md:pb-8">
+    <div className="min-h-screen bg-background pt-16 pb-36 md:pb-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center mb-6">
@@ -681,6 +761,82 @@ const ChallengeDetail: React.FC = () => {
             </Tabs>
           </CardContent>
         </Card>
+      </div>
+      <Dialog open={isBetDialogOpen} onOpenChange={handleBetDialogChange}>
+        <DialogContent className="font-body">
+          <DialogHeader>
+            <DialogTitle className="font-heading">
+              {selectedSide === 'no' ? detail('buy_no_title') : detail('buy_yes_title')}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedSide === 'no' ? detail('buy_no_description') : detail('buy_yes_description')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="bet-amount" className="text-sm font-medium text-muted-foreground font-button">
+                {detail('bet_amount')}
+              </label>
+              <Input
+                id="bet-amount"
+                type="number"
+                min="0"
+                step="0.01"
+                value={betAmount}
+                onChange={(event) => setBetAmount(event.target.value)}
+                placeholder="0.00"
+              />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-2 font-button">
+                {detail('quick_amounts_label')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {quickAmounts.map((amountOption) => (
+                  <Button
+                    key={amountOption}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="font-button"
+                    onClick={() => setBetAmount(amountOption.toString())}
+                  >
+                    {amountOption} SOL
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              className="w-full font-button"
+              onClick={handleConfirmBet}
+              disabled={!betAmount || Number.isNaN(Number(betAmount)) || Number(betAmount) <= 0}
+            >
+              {detail('confirm_purchase')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex gap-4">
+          <Button
+            type="button"
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-button py-6 text-lg"
+            onClick={() => handleOpenBetDialog('yes')}
+          >
+            {detail('buy_yes')}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1 border-red-500 text-red-500 hover:bg-red-50 font-button py-6 text-lg"
+            onClick={() => handleOpenBetDialog('no')}
+          >
+            {detail('buy_no')}
+          </Button>
+        </div>
       </div>
     </div>
   );

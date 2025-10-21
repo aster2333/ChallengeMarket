@@ -26,7 +26,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<><Navbar /><Home /></>} />
                     <Route path="/create" element={<><Navbar hideBottomNav={true} /><CreateChallenge /></>} />
-                    <Route path="/challenge/:id" element={<><Navbar /><ChallengeDetail /></>} />
+                    <Route path="/challenge/:id" element={<><Navbar hideBottomNav /><ChallengeDetail /></>} />
                     <Route path="/profile" element={<><Navbar /><Profile /></>} />
                     <Route path="/settlement/:id" element={<><Navbar /><Settlement /></>} />
                   </Routes>
