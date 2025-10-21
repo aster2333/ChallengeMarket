@@ -9,6 +9,7 @@ import zhChallenge from '../locales/zh/challenge.json';
 import zhProfile from '../locales/zh/profile.json';
 import zhSettlement from '../locales/zh/settlement.json';
 import zhErrors from '../locales/zh/errors.json';
+import zhNotifications from '../locales/zh/notifications.json';
 
 import enCommon from '../locales/en/common.json';
 import enHome from '../locales/en/home.json';
@@ -16,6 +17,7 @@ import enChallenge from '../locales/en/challenge.json';
 import enProfile from '../locales/en/profile.json';
 import enSettlement from '../locales/en/settlement.json';
 import enErrors from '../locales/en/errors.json';
+import enNotifications from '../locales/en/notifications.json';
 
 const resources = {
   zh: {
@@ -24,7 +26,8 @@ const resources = {
     challenge: zhChallenge,
     profile: zhProfile,
     settlement: zhSettlement,
-    errors: zhErrors
+    errors: zhErrors,
+    notifications: zhNotifications
   },
   en: {
     common: enCommon,
@@ -32,7 +35,8 @@ const resources = {
     challenge: enChallenge,
     profile: enProfile,
     settlement: enSettlement,
-    errors: enErrors
+    errors: enErrors,
+    notifications: enNotifications
   }
 };
 
@@ -51,7 +55,7 @@ i18n
     },
     
     // 命名空间配置
-    ns: ['common', 'home', 'challenge', 'profile', 'settlement', 'errors'],
+    ns: ['common', 'home', 'challenge', 'profile', 'settlement', 'errors', 'notifications'],
     defaultNS: 'common',
     
     // 插值配置

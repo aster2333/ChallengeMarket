@@ -11,7 +11,8 @@
     "help_feedback": "帮助与反馈",
     "about_us": "关于我们",
     "dark_mode": "深色",
-    "light_mode": "浅色"
+    "light_mode": "浅色",
+    "notifications": "通知"
   },
   "buttons": {
     "confirm": "确认",

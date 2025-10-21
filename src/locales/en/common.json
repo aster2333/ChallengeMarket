@@ -11,7 +11,8 @@
     "help_feedback": "Help & Feedback",
     "about_us": "About Us",
     "dark_mode": "Dark",
-    "light_mode": "Light"
+    "light_mode": "Light",
+    "notifications": "Notifications"
   },
   "buttons": {
     "confirm": "Confirm",

@@ -11,6 +11,7 @@ import CreateChallenge from './pages/CreateChallenge'
 import ChallengeDetail from './pages/ChallengeDetail'
 import Profile from './pages/Profile'
 import Settlement from './pages/Settlement'
+import Notifications from './pages/Notifications'
 
 function App() {
   console.log('App component is rendering')
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/create" element={<><Navbar hideBottomNav={true} /><CreateChallenge /></>} />
                     <Route path="/challenge/:id" element={<><Navbar hideBottomNav /><ChallengeDetail /></>} />
                     <Route path="/profile" element={<><Navbar /><Profile /></>} />
+                    <Route path="/notifications" element={<><Navbar /><Notifications /></>} />
                     <Route path="/settlement/:id" element={<><Navbar /><Settlement /></>} />
                   </Routes>
                   <Toast />

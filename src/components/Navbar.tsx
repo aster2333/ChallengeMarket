@@ -174,26 +174,26 @@ const NotificationButton: React.FC = () => {
   const { isConnected } = useSolana();
   const { isConnected: wcConnected } = useWalletConnect();
   const { isUnlocked } = useLocalWallet();
-  
+  const { t } = useTranslation('common');
+
   // 检查是否有任何钱包连接
   const hasConnection = isConnected || wcConnected || isUnlocked;
-  
+
   // 只有在用户登录时才显示通知按钮
   if (!hasConnection) {
     return null;
   }
-  
+
   return (
     <Button
       variant="ghost"
       size="sm"
       className="p-2 hover:bg-accent rounded-full"
-      onClick={() => {
-        // TODO: 实现通知功能
-        console.log('通知按钮被点击');
-      }}
+      asChild
     >
-      <Bell className="w-5 h-5 text-foreground" />
+      <Link to="/notifications" aria-label={t('navbar.notifications')} className="relative">
+        <Bell className="w-5 h-5 text-foreground" />
+      </Link>
     </Button>
   );
 };
