@@ -189,7 +189,7 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
         wallet.features.includes(StandardConnect) &&
         wallet.features.includes("solana:signAndSendTransaction")
     );
-    
+
     // If no wallets found with strict filtering, try relaxed filtering
     const relaxedFiltered = allWallets.filter(
       (wallet) =>
@@ -197,20 +197,31 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
         (wallet.chains?.some((c) => c.startsWith("solana:")) || !wallet.chains?.length) &&
         wallet.features.includes(StandardConnect)
     );
-    
+
     // Use strict filtering if available, otherwise use relaxed
     const standardWallets = strictFiltered.length > 0 ? strictFiltered : relaxedFiltered;
-    
-    // Combine with traditional wallets
-    const combinedWallets = [...standardWallets, ...traditionalWallets];
-    
+
+    const walletMap = new Map<string, UiWallet>();
+
+    standardWallets.forEach((wallet) => {
+      walletMap.set(wallet.name, wallet);
+    });
+
+    traditionalWallets.forEach((wallet) => {
+      if (!walletMap.has(wallet.name)) {
+        walletMap.set(wallet.name, wallet as unknown as UiWallet);
+      }
+    });
+
+    const combinedWallets = Array.from(walletMap.values());
+
     console.log("✅ Strict filtered wallets:", strictFiltered.length);
     console.log("✅ Relaxed filtered wallets:", relaxedFiltered.length);
     console.log("✅ Traditional wallets:", traditionalWallets.length);
     console.log("✅ Final combined wallets:", combinedWallets);
     console.log("✅ Total compatible wallets:", combinedWallets.length);
-    
-    return combinedWallets as UiWallet[];
+
+    return combinedWallets;
   }, [allWallets, traditionalWallets]);
 
   // State management
@@ -220,18 +231,10 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
   const [balance, setBalance] = useState<number | null>(null);
 
   // Check if connected (account must exist in the wallet's accounts)
-  const isConnected = useMemo(() => {
-    if (!selectedAccount || !selectedWallet) return false;
-
-    // Find the wallet and check if it still has this account
-    const currentWallet = wallets.find((w) => w.name === selectedWallet.name);
-    return !!(
-      currentWallet &&
-      currentWallet.accounts.some(
-        (acc) => acc.address === selectedAccount.address
-      )
-    );
-  }, [selectedAccount, selectedWallet, wallets]);
+  const isConnected = useMemo(
+    () => Boolean(selectedWallet && selectedAccount),
+    [selectedAccount, selectedWallet]
+  );
 
   const setWalletAndAccount = (
     wallet: UiWallet | null,
