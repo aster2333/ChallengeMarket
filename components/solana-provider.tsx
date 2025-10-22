@@ -25,6 +25,13 @@ import {
 import { useStore } from "../src/store/useStore";
 import type { User } from "../src/store/useStore";
 
+type LegacySignAndSendInput =
+  | Transaction
+  | Uint8Array
+  | { transaction: Transaction | Uint8Array; chain?: string };
+
+type LegacySignAndSendResult = { signature: string } | string;
+
 type LegacySolanaAdapter = {
   isPhantom?: boolean;
   isSolflare?: boolean;
@@ -32,10 +39,9 @@ type LegacySolanaAdapter = {
   connect?: () => Promise<{ publicKey: { toString(): string } }>;
   disconnect?: () => Promise<void>;
   publicKey?: { toString(): string };
-  signAndSendTransaction?: (input: {
-    transaction: Uint8Array;
-    chain?: string;
-  }) => Promise<{ signature: string }>;
+  signAndSendTransaction?: (
+    input: LegacySignAndSendInput
+  ) => Promise<LegacySignAndSendResult>;
 };
 
 type LegacyWalletWindow = Window & {
@@ -51,7 +57,32 @@ type TraditionalWallet = {
   features: (string | typeof StandardConnect)[];
   accounts: UiWalletAccount[];
   isTraditional: boolean;
-  adapter: unknown;
+  adapter: LegacySolanaAdapter;
+};
+
+const isLegacyAdapter = (value: unknown): value is LegacySolanaAdapter =>
+  typeof value === "object" && value !== null;
+
+const isTraditionalWallet = (
+  wallet: UiWallet | TraditionalWallet
+): wallet is TraditionalWallet =>
+  Boolean(wallet && typeof wallet === "object" && "isTraditional" in wallet);
+
+const extractLegacySignature = (result: unknown) => {
+  if (!result) {
+    return null;
+  }
+
+  if (typeof result === "string") {
+    return result;
+  }
+
+  if (typeof result === "object" && "signature" in result) {
+    const signature = (result as { signature?: unknown }).signature;
+    return typeof signature === "string" ? signature : null;
+  }
+
+  return null;
 };
 
 type SignAndSendFeature = {
@@ -77,7 +108,9 @@ const detectTraditionalWallets = () => {
   if (typeof window !== "undefined") {
     const legacyWindow = window as LegacyWalletWindow;
 
-    if (legacyWindow.phantom?.solana) {
+    const phantomAdapter = legacyWindow.phantom?.solana;
+
+    if (phantomAdapter) {
       console.log("🔍 Phantom wallet detected via window.phantom");
       traditionalWallets.push({
         name: "Phantom",
@@ -86,12 +119,14 @@ const detectTraditionalWallets = () => {
         features: [StandardConnect, "solana:signAndSendTransaction"],
         accounts: [],
         isTraditional: true,
-        adapter: legacyWindow.phantom.solana
+        adapter: phantomAdapter as LegacySolanaAdapter
       });
     }
 
     // Check for Solflare
-    if (legacyWindow?.solflare?.isSolflare) {
+    const solflareAdapter = legacyWindow?.solflare;
+
+    if (solflareAdapter?.isSolflare) {
       console.log("🔍 Solflare wallet detected via window.solflare");
       traditionalWallets.push({
         name: "Solflare",
@@ -100,12 +135,14 @@ const detectTraditionalWallets = () => {
         features: [StandardConnect, "solana:signAndSendTransaction"],
         accounts: [],
         isTraditional: true,
-        adapter: legacyWindow.solflare
+        adapter: solflareAdapter as LegacySolanaAdapter
       });
     }
 
     // Check for Backpack
-    if (legacyWindow?.backpack?.isSolana) {
+    const backpackAdapter = legacyWindow?.backpack;
+
+    if (backpackAdapter?.isSolana) {
       console.log("🔍 Backpack wallet detected via window.backpack");
       traditionalWallets.push({
         name: "Backpack",
@@ -114,7 +151,7 @@ const detectTraditionalWallets = () => {
         features: [StandardConnect, "solana:signAndSendTransaction"],
         accounts: [],
         isTraditional: true,
-        adapter: legacyWindow.backpack
+        adapter: backpackAdapter as LegacySolanaAdapter
       });
     }
 
@@ -249,12 +286,20 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
   // Combine standard and traditional wallets
   const wallets = useMemo(() => {
     // First try strict filtering on standard wallets
-    const strictFiltered = allWallets.filter(
-      (wallet) =>
-        wallet.chains?.some((c) => c.startsWith("solana:")) &&
-        wallet.features.includes(StandardConnect) &&
-        wallet.features.includes("solana:signAndSendTransaction")
-    );
+    const strictFiltered = allWallets.filter((wallet) => {
+      const supportsSolana = wallet.chains?.some((c) =>
+        c.startsWith("solana:")
+      );
+
+      const supportsConnect = wallet.features.includes(StandardConnect);
+      const supportsSignAndSend = wallet.features.some(
+        (feature) =>
+          feature === "solana:signAndSendTransaction" ||
+          isSignAndSendFeature(feature)
+      );
+
+      return supportsSolana && supportsConnect && supportsSignAndSend;
+    });
 
     // If no wallets found with strict filtering, try relaxed filtering
     const relaxedFiltered = allWallets.filter(
@@ -403,12 +448,14 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Wallet not connected");
       }
 
+      const maybeTraditional = selectedWallet as UiWallet | TraditionalWallet;
       const features = selectedWallet.features as unknown[];
       const signAndSendFeature = features.find(isSignAndSendFeature);
-
-      if (!signAndSendFeature) {
-        throw new Error("Wallet does not support sending transactions");
-      }
+      const legacyAdapter =
+        isTraditionalWallet(maybeTraditional) &&
+        isLegacyAdapter(maybeTraditional.adapter)
+          ? maybeTraditional.adapter
+          : null;
 
       const fromPubkey = new PublicKey(selectedAccount.address);
       const toPubkey = new PublicKey(destination);
@@ -437,10 +484,54 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
         verifySignatures: false
       });
 
-      const { signature } = await signAndSendFeature.signAndSendTransaction({
-        transaction: new Uint8Array(serialized),
-        chain
-      });
+      let signature: string | null = null;
+
+      if (signAndSendFeature) {
+        const response = await signAndSendFeature.signAndSendTransaction({
+          transaction: new Uint8Array(serialized),
+          chain
+        });
+
+        signature = response.signature;
+      } else if (legacyAdapter?.signAndSendTransaction) {
+        const legacyInputs: LegacySignAndSendInput[] = [
+          { transaction },
+          transaction,
+          new Uint8Array(serialized)
+        ];
+
+        let lastError: unknown;
+
+        for (const input of legacyInputs) {
+          try {
+            const result = await legacyAdapter.signAndSendTransaction(input);
+            signature = extractLegacySignature(result);
+
+            if (signature) {
+              break;
+            }
+          } catch (error) {
+            lastError = error;
+          }
+        }
+
+        if (!signature) {
+          if (lastError) {
+            console.error(
+              "Legacy wallet signAndSendTransaction failed",
+              lastError
+            );
+          }
+
+          throw new Error("Wallet does not support sending transactions");
+        }
+      } else {
+        throw new Error("Wallet does not support sending transactions");
+      }
+
+      if (!signature) {
+        throw new Error("Failed to obtain transaction signature");
+      }
 
       await connection.confirmTransaction(
         {
