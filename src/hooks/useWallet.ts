@@ -14,7 +14,11 @@ export const useWallet = () => {
     isConnected,
     publicKey: solanaPublicKey,
   } = useSolana()
-  const { user, setUser, setIsWalletConnected } = useStore()
+  const user = useStore((state) => state.user)
+  const setUser = useStore((state) => state.setUser)
+  const setIsWalletConnected = useStore(
+    (state) => state.setIsWalletConnected
+  )
   const { handleError, handleSuccess } = useErrorHandler()
   const [balance, setBalance] = useState<number>(() =>
     typeof solanaBalance === 'number' ? solanaBalance : 0
@@ -73,28 +77,44 @@ export const useWallet = () => {
   }, [solanaBalance])
 
   useEffect(() => {
-    setIsWalletConnected(isConnected)
-
-    if (isConnected && publicKey) {
-      const userData = {
-        address: publicKey.toString(),
-        publicKey: publicKey.toString(),
-        totalEarnings: user?.totalEarnings || 0,
-        totalBets: user?.totalBets || 0,
-        challengesCreated: user?.challengesCreated || 0,
-        challengesAccepted: user?.challengesAccepted || 0,
-        winRate: user?.winRate || 0,
-        balance: balance,
-        nfts: user?.nfts || []
-      }
-
-      setUser(userData)
-      updateBalance()
-    } else {
-      setUser(null)
-      setBalance(0)
+    const { isWalletConnected } = useStore.getState()
+    if (isWalletConnected !== isConnected) {
+      setIsWalletConnected(isConnected)
     }
-  }, [balance, isConnected, publicKey, setIsWalletConnected, setUser, updateBalance, user])
+  }, [isConnected, setIsWalletConnected])
+
+  useEffect(() => {
+    const currentUser = useStore.getState().user
+
+    if (!isConnected || !publicKey) {
+      if (currentUser !== null) {
+        setUser(null)
+      }
+      setBalance(0)
+      return
+    }
+
+    const address = publicKey.toString()
+    const nextBalance = balance
+
+    if (
+      !currentUser ||
+      currentUser.publicKey !== address ||
+      currentUser.balance !== nextBalance
+    ) {
+      setUser({
+        address,
+        publicKey: address,
+        totalEarnings: currentUser?.totalEarnings ?? 0,
+        totalBets: currentUser?.totalBets ?? 0,
+        challengesCreated: currentUser?.challengesCreated ?? 0,
+        challengesAccepted: currentUser?.challengesAccepted ?? 0,
+        winRate: currentUser?.winRate ?? 0,
+        balance: nextBalance,
+        nfts: currentUser?.nfts ?? [],
+      })
+    }
+  }, [balance, isConnected, publicKey, setUser])
 
   useEffect(() => {
     if (isConnected && publicKey) {
