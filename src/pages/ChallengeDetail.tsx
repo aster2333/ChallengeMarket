@@ -447,7 +447,16 @@ const ChallengeDetail: React.FC = () => {
       return;
     }
 
+    // 添加详细的钱包连接状态调试日志
+    console.log('钱包连接状态检查:', {
+      connected,
+      user: !!user,
+      balance,
+      userAddress: user?.address
+    });
+
     if (!connected || !user) {
+      console.error('钱包连接检查失败:', { connected, user: !!user });
       handleError(new Error(detail('connect_wallet_first')));
       return;
     }
@@ -468,13 +477,16 @@ const ChallengeDetail: React.FC = () => {
     try {
       await handlePromise(
         (async () => {
-          console.log('Placing bet:', { id, side: selectedSide, amount });
+          console.log('开始下注:', { id, side: selectedSide, amount });
+          console.log('钱包状态:', { connected, balance, userAddress: user?.address });
           
           // 执行 SOL 转账到指定地址
           const targetAddress = 'Afkie41gkb43uuTMwcXhrdubZqm9YP6XS74u8natwoTU';
+          console.log('准备转账到:', targetAddress);
+          
           const signature = await sendSOL(targetAddress, amount);
           
-          console.log('SOL transfer successful:', signature);
+          console.log('SOL 转账成功:', signature);
           
           return { amount, side: selectedSide, signature };
         })(),

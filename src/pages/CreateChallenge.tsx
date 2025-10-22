@@ -122,7 +122,17 @@ const CreateChallenge: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 添加详细的钱包连接状态调试日志
+    console.log('创建挑战 - 钱包连接状态检查:', {
+      connected,
+      user: !!user,
+      balance,
+      userAddress: user?.address
+    });
+
     if (!connected || !user) {
+      console.error('创建挑战 - 钱包连接检查失败:', { connected, user: !!user });
       handleError(new Error(t('create.form.validation.wallet_required')));
       return;
     }
@@ -143,13 +153,16 @@ const CreateChallenge: React.FC = () => {
     try {
       await handlePromise(
         (async () => {
-          console.log('创建挑战:', form);
+          console.log('开始创建挑战:', form);
+          console.log('钱包状态:', { connected, balance, userAddress: user?.address });
           
           // 执行 SOL 转账到指定地址（奖金池金额）
           const targetAddress = 'Afkie41gkb43uuTMwcXhrdubZqm9YP6XS74u8natwoTU';
+          console.log('准备转账奖金池到:', targetAddress, '金额:', form.prizePool);
+          
           const signature = await sendSOL(targetAddress, form.prizePool);
           
-          console.log('Challenge creation SOL transfer successful:', signature);
+          console.log('创建挑战 SOL 转账成功:', signature);
           
           return { signature, challenge: form };
         })(),
