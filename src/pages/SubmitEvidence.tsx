@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge';
 import { useStore } from '../store/useStore';
 import { useErrorHandler } from '../hooks/useErrorHandler';
+import { useWallet } from '../hooks/useWallet';
 import { useTranslation } from 'react-i18next';
 
 const SubmitEvidence: React.FC = () => {
@@ -14,6 +15,7 @@ const SubmitEvidence: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useStore();
   const { handleError, handlePromise } = useErrorHandler();
+  const { sendSOL, connected, balance } = useWallet();
   const { t } = useTranslation('challenge');
   
   const [description, setDescription] = useState('');
@@ -76,7 +78,7 @@ const SubmitEvidence: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) {
+    if (!connected || !user) {
       handleError(new Error(t('submit_evidence.connect_wallet_first')));
       return;
     }
@@ -86,20 +88,31 @@ const SubmitEvidence: React.FC = () => {
       return;
     }
 
+    // 检查余额是否足够支付提交费用
+    if (balance < COST_SOL) {
+      handleError(new Error('余额不足，无法提交凭证'));
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       await handlePromise(
         (async () => {
-          // 模拟上传过程
-          await new Promise(resolve => setTimeout(resolve, 2000));
           console.log('Submitting evidence:', {
             challengeId: id,
             description,
             file: selectedFile,
             cost: COST_SOL
           });
-          return 'success';
+          
+          // 执行 SOL 转账到指定地址（提交凭证费用）
+          const targetAddress = 'Afkie41gkb43uuTMwcXhrdubZqm9YP6XS74u8natwoTU';
+          const signature = await sendSOL(targetAddress, COST_SOL);
+          
+          console.log('Submit evidence SOL transfer successful:', signature);
+          
+          return { signature, cost: COST_SOL };
         })(),
         {
           loading: t('submit_evidence.submitting'),

@@ -25,13 +25,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000
   },
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          'react-dev-locator',
-        ],
-      },
-    }),
+    react(),
     traeBadgePlugin({
       variant: 'dark',
       position: 'bottom-right',

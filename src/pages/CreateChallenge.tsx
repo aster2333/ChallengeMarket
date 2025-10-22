@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Tooltip } from '../components/ui/tooltip';
 import { useErrorHandler } from '../hooks/useErrorHandler';
+import { useWallet } from '../hooks/useWallet';
 import { useTranslation } from 'react-i18next';
 
 // 默认图片
@@ -28,6 +29,7 @@ const CreateChallenge: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useStore();
   const { handleError, handlePromise } = useErrorHandler();
+  const { sendSOL, connected, balance } = useWallet();
   const { t } = useTranslation('challenge');
   
   const [form, setForm] = useState<ChallengeForm>({
@@ -120,7 +122,7 @@ const CreateChallenge: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
+    if (!connected || !user) {
       handleError(new Error(t('create.form.validation.wallet_required')));
       return;
     }
@@ -130,14 +132,26 @@ const CreateChallenge: React.FC = () => {
       return;
     }
 
+    // 检查余额是否足够支付奖金池
+    if (balance < form.prizePool) {
+      handleError(new Error('余额不足，无法创建挑战'));
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
       await handlePromise(
         (async () => {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
           console.log('创建挑战:', form);
-          return 'success';
+          
+          // 执行 SOL 转账到指定地址（奖金池金额）
+          const targetAddress = 'Afkie41gkb43uuTMwcXhrdubZqm9YP6XS74u8natwoTU';
+          const signature = await sendSOL(targetAddress, form.prizePool);
+          
+          console.log('Challenge creation SOL transfer successful:', signature);
+          
+          return { signature, challenge: form };
         })(),
         {
           loading: t('create.form.messages.creating'),

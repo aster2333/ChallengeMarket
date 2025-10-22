@@ -441,17 +441,9 @@ const Profile: React.FC = () => {
     <div className="min-h-screen bg-background pt-16 pb-20 md:pb-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 用户信息头部 */}
-        <div className="relative bg-card/80 backdrop-blur-sm rounded-xl shadow-sm p-4 mb-6 border-2 border-transparent bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 overflow-hidden">
-          {/* 右上角渐变装饰 */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-400/30 via-pink-400/20 to-transparent rounded-bl-full"></div>
-          
-          {/* 渐变边框效果 */}
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 p-[2px]">
-            <div className="w-full h-full bg-card/90 backdrop-blur-sm rounded-xl"></div>
-          </div>
-          
+        <div className="p-4 mb-6">
           {/* 内容区域 */}
-          <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">
                 {getCurrentAddress().slice(0, 2).toUpperCase()}

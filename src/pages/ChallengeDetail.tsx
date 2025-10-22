@@ -16,6 +16,7 @@ import {
   DialogTitle
 } from '../components/ui/dialog';
 import { useErrorHandler } from '../hooks/useErrorHandler';
+import { useWallet } from '../hooks/useWallet';
 import { useTranslation } from 'react-i18next';
 import i18n from '../lib/i18n';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
@@ -102,6 +103,7 @@ const ChallengeDetail: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useStore();
   const { handleError, handlePromise } = useErrorHandler();
+  const { sendSOL, connected, balance } = useWallet();
   const { t } = useTranslation('challenge');
   const detail = (key: string) => t(`detail.${key}`);
 
@@ -331,18 +333,59 @@ const ChallengeDetail: React.FC = () => {
   }, [id, language]);
 
   const handleJoinChallenge = async () => {
-    if (!user) {
+    if (!connected || !user) {
       handleError(new Error(detail('connect_wallet_first')));
       return;
     }
 
-    // 跳转到上传凭证页面
-    navigate(`/challenge/${id}/submit-evidence`);
+    // 参与挑战费用，这里假设是固定的 0.05 SOL
+    const joinFee = 0.05;
+
+    // 检查余额是否足够
+    if (balance < joinFee) {
+      handleError(new Error('余额不足'));
+      return;
+    }
+
+    try {
+      await handlePromise(
+        (async () => {
+          console.log('Joining challenge:', id);
+          
+          // 执行 SOL 转账到指定地址
+          const targetAddress = 'Afkie41gkb43uuTMwcXhrdubZqm9YP6XS74u8natwoTU';
+          const signature = await sendSOL(targetAddress, joinFee);
+          
+          console.log('Join challenge SOL transfer successful:', signature);
+          
+          return { signature, fee: joinFee };
+        })(),
+        {
+          loading: '正在参与挑战...',
+          success: '参与挑战成功！',
+          error: '参与挑战失败'
+        }
+      );
+
+      // 跳转到上传凭证页面
+      navigate(`/challenge/${id}/submit-evidence`);
+    } catch (error) {
+      handleError(error, '参与挑战失败');
+    }
   };
 
   const handleBankroll = async () => {
-    if (!user) {
+    if (!connected || !user) {
       handleError(new Error(detail('connect_wallet_first')));
+      return;
+    }
+
+    // 抢庄费用，这里假设是奖金池的10%
+    const bankrollFee = challenge ? challenge.prizePool * 0.1 : 0.1;
+
+    // 检查余额是否足够
+    if (balance < bankrollFee) {
+      handleError(new Error('余额不足'));
       return;
     }
 
@@ -350,8 +393,14 @@ const ChallengeDetail: React.FC = () => {
       await handlePromise(
         (async () => {
           console.log('Bankrolling challenge:', id);
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return 'success';
+          
+          // 执行 SOL 转账到指定地址
+          const targetAddress = 'Afkie41gkb43uuTMwcXhrdubZqm9YP6XS74u8natwoTU';
+          const signature = await sendSOL(targetAddress, bankrollFee);
+          
+          console.log('Bankroll SOL transfer successful:', signature);
+          
+          return { signature, fee: bankrollFee };
         })(),
         {
           loading: detail('bankrolling'),
@@ -398,7 +447,7 @@ const ChallengeDetail: React.FC = () => {
       return;
     }
 
-    if (!user) {
+    if (!connected || !user) {
       handleError(new Error(detail('connect_wallet_first')));
       return;
     }
@@ -410,12 +459,24 @@ const ChallengeDetail: React.FC = () => {
       return;
     }
 
+    // 检查余额是否足够
+    if (balance < amount) {
+      handleError(new Error('余额不足'));
+      return;
+    }
+
     try {
       await handlePromise(
         (async () => {
           console.log('Placing bet:', { id, side: selectedSide, amount });
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { amount, side: selectedSide };
+          
+          // 执行 SOL 转账到指定地址
+          const targetAddress = 'Afkie41gkb43uuTMwcXhrdubZqm9YP6XS74u8natwoTU';
+          const signature = await sendSOL(targetAddress, amount);
+          
+          console.log('SOL transfer successful:', signature);
+          
+          return { amount, side: selectedSide, signature };
         })(),
         {
           loading: detail('betting'),

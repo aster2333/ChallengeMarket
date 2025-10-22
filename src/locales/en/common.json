@@ -213,8 +213,8 @@
     },
     "buttons": {
       "buy_yes": "BUY YES",
-      "buy_delay": "BUY DELAY",
-      "challenge_reward": "Challenge Reward"
+      "buy_delay": "BUY NO",
+      "challenge_reward": "Challenge"
     }
   }
 }
