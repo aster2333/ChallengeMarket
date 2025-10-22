@@ -24,7 +24,12 @@ import {
 } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { useConnect, useDisconnect, type UiWallet, type UiWalletAccount } from '@wallet-standard/react';
+import {
+  useConnect,
+  useDisconnect,
+  type UiWallet,
+  type UiWalletAccount
+} from '@wallet-standard/react';
 import { useSolana } from '../../components/solana-provider';
 import { useWalletConnect } from '../providers/WalletConnectProvider';
 import { useLocalWallet } from '../providers/LocalWalletProvider';
@@ -68,9 +73,16 @@ function WalletMenuItem({ wallet, onConnect }: { wallet: UiWallet; onConnect: ()
   }
 
   // 检查钱包是否真正可用
+  type LegacyWalletWindow = Window & {
+    phantom?: { solana?: unknown };
+    solflare?: unknown;
+    backpack?: unknown;
+    coinbaseSolana?: unknown;
+  };
+
   const isWalletAvailable = () => {
     if (!wallet) return false;
-    
+
     // 检查钱包是否有必要的属性
     if (!wallet.name || !wallet.accounts) return false;
     
@@ -79,16 +91,17 @@ function WalletMenuItem({ wallet, onConnect }: { wallet: UiWallet; onConnect: ()
     
     // 对于浏览器扩展钱包，检查是否真正安装
     if (typeof window !== 'undefined') {
+      const legacyWindow = window as LegacyWalletWindow;
       // 检查常见的钱包对象
       const walletName = wallet.name.toLowerCase();
       if (walletName.includes('phantom')) {
-        return Boolean((window as any).phantom?.solana);
+        return Boolean(legacyWindow.phantom?.solana);
       } else if (walletName.includes('solflare')) {
-        return Boolean((window as any).solflare);
+        return Boolean(legacyWindow.solflare);
       } else if (walletName.includes('backpack')) {
-        return Boolean((window as any).backpack);
+        return Boolean(legacyWindow.backpack);
       } else if (walletName.includes('coinbase')) {
-        return Boolean((window as any).coinbaseSolana);
+        return Boolean(legacyWindow.coinbaseSolana);
       }
     }
     

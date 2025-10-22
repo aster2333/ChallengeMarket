@@ -25,6 +25,25 @@ import {
 import { useStore } from "../src/store/useStore";
 import type { User } from "../src/store/useStore";
 
+type LegacySolanaAdapter = {
+  isPhantom?: boolean;
+  isSolflare?: boolean;
+  isSolana?: boolean;
+  connect?: () => Promise<{ publicKey: { toString(): string } }>;
+  disconnect?: () => Promise<void>;
+  publicKey?: { toString(): string };
+  signAndSendTransaction?: (input: {
+    transaction: Uint8Array;
+    chain?: string;
+  }) => Promise<{ signature: string }>;
+};
+
+type LegacyWalletWindow = Window & {
+  phantom?: { solana?: LegacySolanaAdapter };
+  solflare?: (LegacySolanaAdapter & { isSolflare?: boolean }) | undefined;
+  backpack?: (LegacySolanaAdapter & { isBackpack?: boolean }) | undefined;
+};
+
 type TraditionalWallet = {
   name: string;
   icon: string;
@@ -55,48 +74,54 @@ const detectTraditionalWallets = () => {
   const traditionalWallets: TraditionalWallet[] = [];
   
   // Check for Phantom
-  if (typeof window !== 'undefined' && (window as any).phantom?.solana) {
-    console.log("🔍 Phantom wallet detected via window.phantom");
-    traditionalWallets.push({
-      name: "Phantom",
-      icon: "https://phantom.app/img/phantom-logo.svg",
-      chains: ["solana:mainnet", "solana:devnet", "solana:testnet"],
-      features: [StandardConnect, "solana:signAndSendTransaction"],
-      accounts: [],
-      isTraditional: true,
-      adapter: (window as any).phantom.solana
-    });
+  if (typeof window !== "undefined") {
+    const legacyWindow = window as LegacyWalletWindow;
+
+    if (legacyWindow.phantom?.solana) {
+      console.log("🔍 Phantom wallet detected via window.phantom");
+      traditionalWallets.push({
+        name: "Phantom",
+        icon: "https://phantom.app/img/phantom-logo.svg",
+        chains: ["solana:mainnet", "solana:devnet", "solana:testnet"],
+        features: [StandardConnect, "solana:signAndSendTransaction"],
+        accounts: [],
+        isTraditional: true,
+        adapter: legacyWindow.phantom.solana
+      });
+    }
+
+    // Check for Solflare
+    if (legacyWindow?.solflare?.isSolflare) {
+      console.log("🔍 Solflare wallet detected via window.solflare");
+      traditionalWallets.push({
+        name: "Solflare",
+        icon: "https://solflare.com/favicon.ico",
+        chains: ["solana:mainnet", "solana:devnet", "solana:testnet"],
+        features: [StandardConnect, "solana:signAndSendTransaction"],
+        accounts: [],
+        isTraditional: true,
+        adapter: legacyWindow.solflare
+      });
+    }
+
+    // Check for Backpack
+    if (legacyWindow?.backpack?.isSolana) {
+      console.log("🔍 Backpack wallet detected via window.backpack");
+      traditionalWallets.push({
+        name: "Backpack",
+        icon: "https://backpack.app/favicon.ico",
+        chains: ["solana:mainnet", "solana:devnet", "solana:testnet"],
+        features: [StandardConnect, "solana:signAndSendTransaction"],
+        accounts: [],
+        isTraditional: true,
+        adapter: legacyWindow.backpack
+      });
+    }
+
+    console.log("🔍 Traditional wallets detected:", traditionalWallets.length);
+    return traditionalWallets;
   }
 
-  // Check for Solflare
-  if (typeof window !== 'undefined' && (window as any).solflare?.isSolflare) {
-    console.log("🔍 Solflare wallet detected via window.solflare");
-    traditionalWallets.push({
-      name: "Solflare",
-      icon: "https://solflare.com/favicon.ico",
-      chains: ["solana:mainnet", "solana:devnet", "solana:testnet"],
-      features: [StandardConnect, "solana:signAndSendTransaction"],
-      accounts: [],
-      isTraditional: true,
-      adapter: (window as any).solflare
-    });
-  }
-
-  // Check for Backpack
-  if (typeof window !== 'undefined' && (window as any).backpack?.isSolana) {
-    console.log("🔍 Backpack wallet detected via window.backpack");
-    traditionalWallets.push({
-      name: "Backpack",
-      icon: "https://backpack.app/favicon.ico",
-      chains: ["solana:mainnet", "solana:devnet", "solana:testnet"],
-      features: [StandardConnect, "solana:signAndSendTransaction"],
-      accounts: [],
-      isTraditional: true,
-      adapter: (window as any).backpack
-    });
-  }
-  
-  console.log("🔍 Traditional wallets detected:", traditionalWallets.length);
   return traditionalWallets;
 };
 
