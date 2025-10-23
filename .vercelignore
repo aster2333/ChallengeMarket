@@ -88,3 +88,10 @@ CHALLENGE_DETAIL_REDESIGN.md
 DEPLOYMENT_FIXES.md
 DEPLOYMENT_GUIDE.md
 INTERNATIONALIZATION_FIXES.md
+
+# Build configuration files required during deployment
+!vite.config.ts
+!tsconfig.json
+!tailwind.config.js
+!postcss.config.js
+!components.json
