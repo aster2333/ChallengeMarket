@@ -42,6 +42,10 @@ type LegacySolanaAdapter = {
   signAndSendTransaction?: (
     input: LegacySignAndSendInput
   ) => Promise<LegacySignAndSendResult>;
+  signTransaction?: (transaction: Transaction) => Promise<Transaction>;
+  sendTransaction?: (
+    transaction: Transaction
+  ) => Promise<LegacySignAndSendResult>;
 };
 
 type LegacyWalletWindow = Window & {
@@ -442,20 +446,49 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
     [connection, refreshBalance, selectedAccount]
   );
 
+  const findLegacyAdapter = useCallback(
+    (wallet: UiWallet | null) => {
+      if (!wallet) {
+        return null;
+      }
+
+      const maybeTraditional = wallet as UiWallet | TraditionalWallet;
+
+      if (
+        isTraditionalWallet(maybeTraditional) &&
+        isLegacyAdapter(maybeTraditional.adapter)
+      ) {
+        return maybeTraditional.adapter;
+      }
+
+      const fallback = traditionalWallets.find(
+        (candidate) => candidate.name === wallet.name
+      );
+
+      if (fallback && isLegacyAdapter(fallback.adapter)) {
+        return fallback.adapter;
+      }
+
+      return null;
+    },
+    [traditionalWallets]
+  );
+
+  const ensureLegacyConnection = useCallback(async (adapter: LegacySolanaAdapter) => {
+    if (!adapter.publicKey) {
+      await adapter.connect?.();
+    }
+  }, []);
+
   const sendSol = useCallback(
     async (destination: string, amount: number) => {
       if (!selectedAccount || !selectedWallet) {
         throw new Error("Wallet not connected");
       }
 
-      const maybeTraditional = selectedWallet as UiWallet | TraditionalWallet;
       const features = selectedWallet.features as unknown[];
       const signAndSendFeature = features.find(isSignAndSendFeature);
-      const legacyAdapter =
-        isTraditionalWallet(maybeTraditional) &&
-        isLegacyAdapter(maybeTraditional.adapter)
-          ? maybeTraditional.adapter
-          : null;
+      const legacyAdapter = findLegacyAdapter(selectedWallet);
 
       const fromPubkey = new PublicKey(selectedAccount.address);
       const toPubkey = new PublicKey(destination);
@@ -479,50 +512,79 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
         })
       );
 
-      const serialized = transaction.serialize({
-        requireAllSignatures: false,
-        verifySignatures: false
-      });
-
       let signature: string | null = null;
 
       if (signAndSendFeature) {
+        const serialized = transaction.serialize({
+          requireAllSignatures: false,
+          verifySignatures: false
+        });
+
         const response = await signAndSendFeature.signAndSendTransaction({
           transaction: new Uint8Array(serialized),
           chain
         });
 
         signature = response.signature;
-      } else if (legacyAdapter?.signAndSendTransaction) {
-        const legacyInputs: LegacySignAndSendInput[] = [
-          { transaction },
-          transaction,
-          new Uint8Array(serialized)
-        ];
+      } else if (legacyAdapter) {
+        await ensureLegacyConnection(legacyAdapter);
 
-        let lastError: unknown;
+        if (legacyAdapter.signAndSendTransaction) {
+          const serialized = transaction.serialize({
+            requireAllSignatures: false,
+            verifySignatures: false
+          });
 
-        for (const input of legacyInputs) {
-          try {
-            const result = await legacyAdapter.signAndSendTransaction(input);
-            signature = extractLegacySignature(result);
+          const legacyInputs: LegacySignAndSendInput[] = [
+            { transaction },
+            transaction,
+            new Uint8Array(serialized)
+          ];
 
-            if (signature) {
-              break;
+          let lastError: unknown;
+
+          for (const input of legacyInputs) {
+            try {
+              const result = await legacyAdapter.signAndSendTransaction(input);
+              signature = extractLegacySignature(result);
+
+              if (signature) {
+                break;
+              }
+            } catch (error) {
+              lastError = error;
             }
-          } catch (error) {
-            lastError = error;
           }
-        }
 
-        if (!signature) {
-          if (lastError) {
+          if (!signature && lastError) {
             console.error(
               "Legacy wallet signAndSendTransaction failed",
               lastError
             );
           }
+        }
 
+        if (!signature && legacyAdapter.signTransaction) {
+          const signedTransaction = await legacyAdapter.signTransaction(
+            transaction
+          );
+          const rawTransaction =
+            signedTransaction && typeof signedTransaction.serialize === "function"
+              ? signedTransaction.serialize()
+              : transaction.serialize();
+          signature = await connection.sendRawTransaction(rawTransaction);
+        }
+
+        if (
+          !signature &&
+          legacyAdapter.sendTransaction &&
+          typeof legacyAdapter.sendTransaction === "function"
+        ) {
+          const result = await legacyAdapter.sendTransaction(transaction);
+          signature = extractLegacySignature(result);
+        }
+
+        if (!signature) {
           throw new Error("Wallet does not support sending transactions");
         }
       } else {
@@ -545,7 +607,14 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
 
       return signature;
     },
-    [connection, refreshBalance, selectedAccount, selectedWallet]
+    [
+      connection,
+      ensureLegacyConnection,
+      findLegacyAdapter,
+      refreshBalance,
+      selectedAccount,
+      selectedWallet
+    ]
   );
 
   // Create context value
