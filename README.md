@@ -1,57 +1,42 @@
-# React + TypeScript + Vite
+# ActionFi — Like Pumpfun for Real World UGC prediction market for action. Act, bet, vote and win.
+### Problem
+In Web3, belief and execution are disconnected:
+•	Prediction markets price opinions but not real actions.
+•	Task platforms reward completion but lack transparency and market dynamics.
+There’s no native way to monetize credibility, accountability, or proof of action on-chain.
+________________________________________
+### Solution
+ActionFi creates a market for human execution.
+Anyone can launch a public challenge, back outcomes with YES/NO staking, and let the market price belief in real-world actions.
+Every challenge is a verifiable on-chain statement — success is rewarded, failure redistributes trust.
+________________________________________
+### Mechanism
+1.	Launch Challenge — Creator deposits ≥0.05 SOL, sets time limit (1 h – 5 d, optional random stop).
+2.	Stake Belief — Users stake on YES / NO pools via constant-product AMM.
+3.	Host Bidding — Others may outbid the host (+0.1 SOL) to “take the stage.”
+4.	Resolution — Chain verifies proof (video / on-chain evidence).
+o	YES wins → supporters share NO pool.
+o	NO wins → skeptics share YES pool.
+5.	Rewards
+o	Creator earns 1 % of total pool if challenge succeeds.
+o	5 % of pot → JP reward pool for top challengers.
+o	Host (if NO wins) gets 2 % of JP.
+6.	Second-Round Challenge — Winner may reopen next round with 10 % of prior profit → perpetual loop.
+________________________________________
+### Economic Model
+Layer	Function	Incentive
+YES/NO Pools	Belief pricing	Early conviction = higher upside
+JP Pool	Action reward	Execution proof bonus
+Host Bidding	Ownership game	Adds liquidity + social tension
+1 % Creator Fee	Quality incentive	Drives real, verifiable actions
+Rolling Rounds	Perpetual liquidity	Continuous market cycle
+Platform 1 %	Sustainability	Maintenance & auditing
+________________________________________
+### Why It Matters
+•	Turns action into a financial primitive.
+•	Enables proof-of-credibility for individuals and DAOs.
+•	Blends DeFi, social identity, and prediction markets into one composable layer.
+________________________________________
+### Tagline
+ActionFi — Launch Challenges. Prove Yourself. Let the Market Decide.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
